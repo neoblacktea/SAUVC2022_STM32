@@ -1,0 +1,5 @@
+make --dry-run --keep-going --print-directory
+make: Entering directory '/home/ben/stm32_ws/SAUVC2022'
+arm-none-eabi-objcopy -O ihex build/SAUVC2022.elf build/SAUVC2022.hex
+make: Leaving directory '/home/ben/stm32_ws/SAUVC2022'
+ 
