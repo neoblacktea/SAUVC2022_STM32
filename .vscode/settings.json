@@ -5,6 +5,7 @@
         "i2c.h": "c",
         "tim.h": "c",
         "usart.h": "c",
-        "gpio.h": "c"
+        "gpio.h": "c",
+        "stm32f4xx.h": "c"
     }
 }

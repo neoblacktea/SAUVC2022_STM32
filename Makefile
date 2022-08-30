@@ -66,7 +66,9 @@ Core/Src/system_stm32f4xx.c
 
 # CPP sources
 CPP_SOURCES = \
-Core/Src/main.cpp
+Core/Src/main.cpp \
+Core/Src/Propulsion_Sys/propulsion_sys.cpp \
+Core/Src/Propulsion_Sys/Motor/motor.cpp
 
 # ASM sources
 ASM_SOURCES =  \

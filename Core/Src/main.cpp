@@ -26,7 +26,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "Propulsion_Sys/propulsion_sys.h"
+#include "Datatype/dynamics.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,7 +68,9 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  Dynamics state = {0};
+  Kinematics control_input = {0};
+  Propulsion_Sys propulsion_sys;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -96,7 +99,7 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
   /* USER CODE BEGIN 2 */
-
+  propulsion_sys.set_timer(&htim2, &htim8);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -104,7 +107,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    propulsion_sys.allocate(control_input);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

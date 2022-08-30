@@ -1,6 +1,6 @@
 {
     "env": {
-        "arm_gcc_path": "/home/ben/stm32_tools/abe_build/builds/destdir/x86_64-pc-linux-gnu"
+        "arm_gcc_path": "/home/ben/STM32_Tools/arm-gnu-toolchain-11.3.rel1-x86_64-arm-none-eabi"
     },
     "configurations": [
         {
@@ -13,8 +13,7 @@
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
                 "${arm_gcc_path}/arm-none-eabi/**",
                 "${arm_gcc_path}/include/**",
-                "${arm_gcc_path}/lib/gcc/arm-none-eabi/11.2.1/include/**",
-                "${arm_gcc_path}/lib/gcc/arm-none-eabi/11.2.1/include-fixed/**"
+                "${arm_gcc_path}/lib/gcc/arm-none-eabi/**"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
