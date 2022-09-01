@@ -6,7 +6,7 @@ T200::T200()
 
 T200::T200(TIM_HandleTypeDef* t, uint32_t c)
 {
-    motor.set(t, c);
+    this->set(t, c);
 }
 
 T200::~T200()
@@ -27,6 +27,7 @@ T200::~T200()
 void T200::set(TIM_HandleTypeDef* t, uint32_t c)
 {
     motor.set(t, c);
+    motor.output(1500);
 }
 
 /**
