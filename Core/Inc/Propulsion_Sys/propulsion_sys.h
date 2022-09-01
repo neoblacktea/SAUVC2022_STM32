@@ -2,14 +2,14 @@
 #define PROPULSION_SYS
 
 #include "stm32f4xx.h"
-#include "Motor/motor.h"
+#include "Motor/t200.h"
 #include "Datatype/dynamics.h"
 
 class Propulsion_Sys
 {
 private:
     float thrust[8];
-    Motor motor[8];
+    T200 motor[8];
 public:
     Propulsion_Sys();
     ~Propulsion_Sys();

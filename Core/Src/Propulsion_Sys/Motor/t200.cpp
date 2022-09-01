@@ -1,11 +1,11 @@
-#include "Propulsion_Sys/Motor/motor.h"
+#include "Propulsion_Sys/Motor/t200.h"
 
-Motor::Motor()
+T200::T200()
 {
     timer = nullptr;
 }
 
-Motor::Motor(TIM_HandleTypeDef* t, uint32_t c)
+T200::T200(TIM_HandleTypeDef* t, uint32_t c)
 {
     timer = t;
     channel = c;
@@ -13,7 +13,7 @@ Motor::Motor(TIM_HandleTypeDef* t, uint32_t c)
     HAL_TIM_PWM_Start(timer, channel);
 }
 
-Motor::~Motor()
+T200::~T200()
 {
     __HAL_TIM_SetCompare(timer, channel, 1500);
 }
@@ -28,7 +28,7 @@ Motor::~Motor()
  *            @arg TIM_CHANNEL_3: TIM Channel 3 selected
  *            @arg TIM_CHANNEL_4: TIM Channel 4 selected
  */ 
-void Motor::set(TIM_HandleTypeDef* t, uint32_t c)
+void T200::set(TIM_HandleTypeDef* t, uint32_t c)
 {
     timer = t;
     channel = c;
@@ -41,7 +41,7 @@ void Motor::set(TIM_HandleTypeDef* t, uint32_t c)
  * @param force force in kgf
  * @retval none
  */ 
-void Motor::output(float force)
+void T200::output(float force)
 {
     if (timer == NULL)
         return;

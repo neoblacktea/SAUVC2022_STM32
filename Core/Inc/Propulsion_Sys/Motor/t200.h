@@ -5,17 +5,17 @@
 
 // * Remember to use HAL_TIM_PWM_Start to start outputing PWM signal.
 
-#ifndef MOTOR_H
-#define MOTOR_H
+#ifndef T200_H
+#define T200_H
 
 #include <cmath>
 #include "stm32f4xx.h"
 #include "motor_graph.h"
 
 /**
- * @brief A PWM driven motor
+ * @brief A T200 motor class
  */
-class Motor
+class T200
 {
 private:
     /* data */
@@ -23,9 +23,9 @@ private:
     uint32_t channel;
 
 public:
-    Motor();
-    Motor(TIM_HandleTypeDef* t, uint32_t c);
-    ~Motor();
+    T200();
+    T200(TIM_HandleTypeDef* t, uint32_t c);
+    ~T200();
     void set(TIM_HandleTypeDef* t, uint32_t c);
     void output(float force);
 };
