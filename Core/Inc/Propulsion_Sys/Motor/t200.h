@@ -10,7 +10,7 @@
 
 #include <cmath>
 #include "stm32f4xx.h"
-#include "motor_graph.h"
+#include "t200_motor_graph.h"
 
 /**
  * @brief A T200 motor class
