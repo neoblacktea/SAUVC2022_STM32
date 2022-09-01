@@ -2,7 +2,7 @@
 #define PROPULSION_SYS
 
 #include "stm32f4xx.h"
-#include "Motor/t200.h"
+#include "t200.h"
 #include "Datatype/dynamics.h"
 
 class Propulsion_Sys
@@ -14,7 +14,7 @@ public:
     Propulsion_Sys();
     ~Propulsion_Sys();
     void set_timer(TIM_HandleTypeDef *tim1, TIM_HandleTypeDef *tim2);
-    void allocate(Kinematics ctrl_input);
+    void allocate(const Kinematics &ctrl_input);
 };
 
 #endif

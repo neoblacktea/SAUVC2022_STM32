@@ -9,7 +9,7 @@
 #define T200_H
 
 #include <cmath>
-#include "stm32f4xx.h"
+#include "motor.h"
 #include "t200_motor_graph.h"
 
 /**
@@ -18,16 +18,14 @@
 class T200
 {
 private:
-    /* data */
-    TIM_HandleTypeDef* timer;
-    uint32_t channel;
+    Motor motor;
 
 public:
     T200();
     T200(TIM_HandleTypeDef* t, uint32_t c);
     ~T200();
     void set(TIM_HandleTypeDef* t, uint32_t c);
-    void output(float force);
+    void output(const float &force);
 };
 
 #endif

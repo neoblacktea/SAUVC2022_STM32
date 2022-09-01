@@ -27,7 +27,7 @@ void Propulsion_Sys::set_timer(TIM_HandleTypeDef *tim1, TIM_HandleTypeDef *tim2)
     motor[7].set(tim2, TIM_CHANNEL_4);
 }
 
-void Propulsion_Sys::allocate(Kinematics ctrl_input)
+void Propulsion_Sys::allocate(const Kinematics &ctrl_input)
 {
     thrust[0] = ctrl_input.linear.x * 0 + ctrl_input.linear.y * 0 + ctrl_input.linear.z * -0.25
                 + ctrl_input.angular.x * -1.3514 + ctrl_input.angular.y * 1.1035 + ctrl_input.angular.z * 0;

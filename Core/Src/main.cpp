@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "Propulsion_Sys/propulsion_sys.h"
 #include "Datatype/dynamics.h"
+#include "robot_arm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,6 +72,10 @@ int main(void)
   Dynamics state = {0};
   Kinematics control_input = {0};
   Propulsion_Sys propulsion_sys;
+  
+  //Robot Arm
+  Robot_Arm arm;
+  int arm_angle[3] = {0, 0, 0};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -100,6 +105,7 @@ int main(void)
   MX_UART5_Init();
   /* USER CODE BEGIN 2 */
   propulsion_sys.set_timer(&htim2, &htim8);
+  arm.set(&htim4, arm_angle);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -108,6 +114,7 @@ int main(void)
   {
     /* USER CODE END WHILE */
     propulsion_sys.allocate(control_input);
+    arm.move(arm_angle);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
