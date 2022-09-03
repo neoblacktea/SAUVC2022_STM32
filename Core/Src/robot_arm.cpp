@@ -40,5 +40,5 @@ void Robot_Arm::set(TIM_HandleTypeDef *t, const int i_a[3])
 void Robot_Arm::move(const int angle[3])
 {
     for (int i = 0; i < 3; i++)
-        motor->output(angle[i] * 100 / 9 + 1500);
+        motor[i].output(angle[i] * 100 / 9 + 1500);
 }
