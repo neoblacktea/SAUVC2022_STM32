@@ -22,7 +22,7 @@ TARGET = SAUVC2022
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -Og
+OPT = -O0
 
 
 #######################################
@@ -70,7 +70,8 @@ Core/Src/main.cpp \
 Core/Src/motor.cpp \
 Core/Src/Propulsion_Sys/t200.cpp \
 Core/Src/Propulsion_Sys/propulsion_sys.cpp \
-Core/Src/robot_arm.cpp
+Core/Src/robot_arm.cpp \
+Core/Src/spi_sensor.cpp
 
 # ASM sources
 ASM_SOURCES =  \
@@ -176,9 +177,10 @@ all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET
 #######################################
 # build the application
 #######################################
-# list of objects
+# list of C objects
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
 vpath %.c $(sort $(dir $(C_SOURCES)))
+# list of CPP objects
 OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(CPP_SOURCES:.cpp=.o)))
 vpath %.cpp $(sort $(dir $(CPP_SOURCES)))
 # list of ASM program objects

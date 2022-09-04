@@ -29,6 +29,7 @@
 #include "Propulsion_Sys/propulsion_sys.h"
 #include "Datatype/dynamics.h"
 #include "robot_arm.h"
+#include "Sensor/spi_sensor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -69,13 +70,19 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+  Spi_Sensor imu;
   Dynamics state = {0};
-  Kinematics control_input = {0};
+  // Kinematics control_input = {0};
+  Kinematics control_input = {{1, 0, 0}, {0, 0, 0}};
   Propulsion_Sys propulsion_sys;
   
   //Robot Arm
   Robot_Arm arm;
-  int arm_angle[3] = {0, 0, 0};
+  int arm_angle[3] = {0};
+
+  uint8_t spi_buf = 0;
+  uint8_t WHO_AM_I = 0x75 | 0x80;
+  uint8_t val = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -104,7 +111,20 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
   /* USER CODE BEGIN 2 */
+  imu.set(&hspi2, GPIOB, GPIO_PIN_12);
+
+  // WHO_AM_I = 0x6B | 0x80;
+  // val = 0x01;
+  // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+  // HAL_SPI_Transmit(&hspi2, (uint8_t*)&WHO_AM_I, 1, 1000);
+  // HAL_SPI_Transmit(&hspi2, (uint8_t*)&val, 1, 1000);
+  // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+  // WHO_AM_I = 0x75 | 0x80;
+
+
+
   propulsion_sys.set_timer(&htim2, &htim8);
+  
   arm.set(&htim4, arm_angle);
   /* USER CODE END 2 */
 
@@ -113,7 +133,12 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+    //IMU start
+    uint8_t who = imu.read_register(0x75);
+    //IMU end
+
     propulsion_sys.allocate(control_input);
+
     arm.move(arm_angle);
     /* USER CODE BEGIN 3 */
   }
