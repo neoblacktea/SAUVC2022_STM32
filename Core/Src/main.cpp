@@ -23,7 +23,6 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "dvl_reader.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -68,29 +67,18 @@ void SystemClock_Config(void);
   * @brief  The application entry point.
   * @retval int
   */
-
-uint8_t t[4];
-float data[100];
-int num =0;
-
 int main(void)
 {
   /* USER CODE BEGIN 1 */
   Spi_Sensor imu;
   Dynamics state = {0};
   // Kinematics control_input = {0};
-  Kinematics control_input = {{1, 0, 0}, {0, 0, 0}};
+  Kinematics control_input = {{1, 2, 3}, {4, 5, 6}};
   Propulsion_Sys propulsion_sys;
-    Dvl_reader Dvl;
-  uint8_t temp = 0;
-  float x, y, z1, z2;
+
   //Robot Arm
   Robot_Arm arm;
   int arm_angle[3] = {0};
-
-  uint8_t spi_buf = 0;
-  uint8_t WHO_AM_I = 0x75 | 0x80;
-  uint8_t val = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -111,55 +99,27 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  // MX_I2C1_Init();
-  // MX_SPI2_Init();
-  // MX_TIM2_Init();
-  // MX_TIM4_Init();
-  // MX_TIM8_Init();
-  // MX_USART2_UART_Init();
-  MX_USART3_UART_Init();
+  MX_I2C1_Init();
+  MX_SPI2_Init();
+  MX_TIM2_Init();
+  MX_TIM4_Init();
+  MX_TIM8_Init();
+  MX_UART4_Init();
   MX_UART5_Init();
   /* USER CODE BEGIN 2 */
   imu.set(&hspi2, GPIOB, GPIO_PIN_12);
 
-  // WHO_AM_I = 0x6B | 0x80;
-  // val = 0x01;
-  // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
-  // HAL_SPI_Transmit(&hspi2, (uint8_t*)&WHO_AM_I, 1, 1000);
-  // HAL_SPI_Transmit(&hspi2, (uint8_t*)&val, 1, 1000);
-  // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-  // WHO_AM_I = 0x75 | 0x80;
-
-
-
   propulsion_sys.set_timer(&htim2, &htim8);
-  
   arm.set(&htim4, arm_angle);
   /* USER CODE END 2 */
-  HAL_UART_Receive_IT(&huart5, t, 4);
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-    // if(HAL_UART_Receive(&huart3, Dvl.input, 222, 0) == HAL_OK)
-    //   {
-    //     temp = 2;
-    //     if(Dvl.input[0] == Dvl.get_delim())
-    //     {
-    //       Dvl.update();
-    //       x = Dvl.get_x();
-    //       y = Dvl.get_y();
-    //       z1 = Dvl.get_z1();
-    //       z2 = Dvl.get_z2();
-    //     }
-    //   }
-      
 
-      // }
-          //IMU start
     uint8_t who = imu.read_register(0x75);
-    //IMU end
 
     propulsion_sys.allocate(control_input);
 
@@ -169,22 +129,6 @@ int main(void)
   /* USER CODE END 3 */
 }
 
-float receive(void)
-{
-	int i;
-	float n;
-	char *ch = (char *) &n;
-	for(i=0;i<4;i++)
-		ch[i] = t[i];
-	return n;
-}
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-  data[num] = receive();
-	num++;
-	HAL_UART_Receive_IT(&huart5, t, 4);
-}
 /**
   * @brief System Clock Configuration
   * @retval None

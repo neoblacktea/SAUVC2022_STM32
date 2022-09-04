@@ -71,8 +71,7 @@ Core/Src/motor.cpp \
 Core/Src/Propulsion_Sys/t200.cpp \
 Core/Src/Propulsion_Sys/propulsion_sys.cpp \
 Core/Src/robot_arm.cpp \
-Core/Src/spi_sensor.cpp \
-Core/Src/dvl_reader.cpp
+Core/Src/spi_sensor.cpp
 
 # ASM sources
 ASM_SOURCES =  \
