@@ -67,6 +67,10 @@ Core/Src/system_stm32f4xx.c
 # CPP sources
 CPP_SOURCES = \
 Core/Src/main.cpp \
+Core/Src/motor.cpp \
+Core/Src/Propulsion_Sys/t200.cpp \
+Core/Src/Propulsion_Sys/propulsion_sys.cpp \
+Core/Src/robot_arm.cpp \
 Core/Src/dvl_reader.cpp
 
 # ASM sources

@@ -27,7 +27,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "Propulsion_Sys/propulsion_sys.h"
+#include "Datatype/dynamics.h"
+#include "robot_arm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -73,9 +75,15 @@ int num =0;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  Dvl_reader Dvl;
+  Dynamics state = {0};
+  Kinematics control_input = {0};
+  Propulsion_Sys propulsion_sys;
+    Dvl_reader Dvl;
   uint8_t temp = 0;
   float x, y, z1, z2;
+  //Robot Arm
+  Robot_Arm arm;
+  int arm_angle[3] = {0, 0, 0};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -105,7 +113,8 @@ int main(void)
   MX_USART3_UART_Init();
   MX_UART5_Init();
   /* USER CODE BEGIN 2 */
-
+  propulsion_sys.set_timer(&htim2, &htim8);
+  arm.set(&htim4, arm_angle);
   /* USER CODE END 2 */
   HAL_UART_Receive_IT(&huart5, t, 4);
   /* Infinite loop */
@@ -128,7 +137,8 @@ int main(void)
       
 
       // }
-      
+          propulsion_sys.allocate(control_input);
+    arm.move(arm_angle);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
