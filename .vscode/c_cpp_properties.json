@@ -1,6 +1,6 @@
 {
     "env": {
-        "arm_gcc_path": "/home/ben/stm32_tools/abe_build/builds/destdir/x86_64-pc-linux-gnu"
+        "arm_gcc_path": "/home/zhc/stm32_tool/arm-gnu-toolchain-11.3.rel1-x86_64-arm-none-eabi"
     },
     "configurations": [
         {
