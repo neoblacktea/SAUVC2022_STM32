@@ -29,7 +29,8 @@
 #include "Propulsion_Sys/propulsion_sys.h"
 #include "Datatype/dynamics.h"
 #include "robot_arm.h"
-#include "Sensor/spi_sensor.h"
+#include "Sensor/mpu9250.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -70,7 +71,14 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  Spi_Sensor imu;
+  uint8_t test = 'A';
+  char uart_buf[100];
+  int uart_buf_len;
+  // Spi_Sensor imu;
+  Mpu9250 imu;
+
+
+
   Dynamics state = {0};
   // Kinematics control_input = {0};
   Kinematics control_input = {{1, 2, 3}, {4, 5, 6}};
@@ -107,7 +115,10 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
   /* USER CODE BEGIN 2 */
+
+  //IMU begin
   imu.set(&hspi2, GPIOB, GPIO_PIN_12);
+  //IMU end
 
   propulsion_sys.set_timer(&htim2, &htim8);
   arm.set(&htim4, arm_angle);
@@ -119,7 +130,13 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-    uint8_t who = imu.read_register(0x75);
+    //IMU begin
+    imu.update(state);
+    uart_buf_len = sprintf(uart_buf, "acce: %.4f, %.4f, %.4f; gyro: %.4f, %.4f, %.4f\r\n", imu.acce[0], imu.acce[1], imu.acce[2], imu.gyro[0], imu.gyro[1], imu.gyro[2]);
+    HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
+    
+    //IMU end
+
 
     propulsion_sys.allocate(control_input);
 

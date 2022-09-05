@@ -62,7 +62,7 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
-Core/Src/system_stm32f4xx.c 
+Core/Src/system_stm32f4xx.c
 
 # CPP sources
 CPP_SOURCES = \
@@ -71,7 +71,8 @@ Core/Src/motor.cpp \
 Core/Src/Propulsion_Sys/t200.cpp \
 Core/Src/Propulsion_Sys/propulsion_sys.cpp \
 Core/Src/robot_arm.cpp \
-Core/Src/spi_sensor.cpp
+Core/Src/Sensor/spi_sensor.cpp \
+Core/Src/Sensor/mpu9250.cpp 
 
 # ASM sources
 ASM_SOURCES =  \
