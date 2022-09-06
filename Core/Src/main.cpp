@@ -30,6 +30,8 @@
 #include "Datatype/dynamics.h"
 #include "robot_arm.h"
 #include "Sensor/spi_sensor.h"
+#include "dvl_reader.h"
+#include "read_data.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,6 +62,15 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+Read_data R;
+Dvl_reader D;
+uint8_t zhc = 0;
+float yaw;
+Dynamics state = {0};
+float velocity[3]; //from sonar
+Robot_Arm arm;
+int arm_angle[3] = {0};
+
 
 /* USER CODE END 0 */
 
@@ -71,14 +82,12 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
   Spi_Sensor imu;
-  Dynamics state = {0};
   // Kinematics control_input = {0};
   Kinematics control_input = {{1, 2, 3}, {4, 5, 6}};
   Propulsion_Sys propulsion_sys;
 
+
   //Robot Arm
-  Robot_Arm arm;
-  int arm_angle[3] = {0};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -107,10 +116,19 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
   /* USER CODE BEGIN 2 */
+
   imu.set(&hspi2, GPIOB, GPIO_PIN_12);
 
   propulsion_sys.set_timer(&htim2, &htim8);
   arm.set(&htim4, arm_angle);
+  R.receieve();
+  HAL_UART_Receive_IT(&huart5, &zhc, 1);
+  HAL_UART_Receive_IT(&huart4, &D.receieve_char, 1);
+  
+  while(zhc!='\n')
+  {
+
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -175,7 +193,30 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  if(huart->Instance == UART5)
+  {
+    R.receieve();
+    if(R.access_ok() == true)
+    {
+      yaw = R.get_yaw();
+      state.position = R.get_geometry_vector();
+      velocity[0] = R.get_vel0();
+      velocity[1] = R.get_vel1();
+      velocity[3] = R.get_vel2();
+      arm_angle[0] = R.get_joint0();
+      arm_angle[1] = R.get_joint1();
+      arm_angle[2] = R.get_joint2();
+      R.access_init();
+    }
+  }
+  else if(huart->Instance == UART4)
+  {
+    D.filling();
+    HAL_UART_Receive_IT(&huart4, &D.receieve_char, 1);
+  }
+}
 /* USER CODE END 4 */
 
 /**
