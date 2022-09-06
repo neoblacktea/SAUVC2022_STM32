@@ -79,7 +79,7 @@ int main(void)
 
 
 
-  Dynamics state = {0};
+  Dynamics state = {{0}, {}, {0}, {0}};
   // Kinematics control_input = {0};
   Kinematics control_input = {{1, 2, 3}, {4, 5, 6}};
   Propulsion_Sys propulsion_sys;
@@ -118,6 +118,7 @@ int main(void)
 
   //IMU begin
   imu.set(&hspi2, GPIOB, GPIO_PIN_12);
+  
   //IMU end
 
   propulsion_sys.set_timer(&htim2, &htim8);
@@ -132,7 +133,12 @@ int main(void)
 
     //IMU begin
     imu.update(state);
-    uart_buf_len = sprintf(uart_buf, "acce: %.4f, %.4f, %.4f; gyro: %.4f, %.4f, %.4f\r\n", imu.acce[0], imu.acce[1], imu.acce[2], imu.gyro[0], imu.gyro[1], imu.gyro[2]);
+    // uart_buf_len = sprintf(uart_buf, "acce:  %.4f, %.4f, %.4f; gyro:  %.4f, %.4f, %.4f\r\n", imu.ax, imu.ay, imu.az, imu.gx, imu.gy, imu.gz);
+    // uart_buf_len = sprintf(uart_buf, "%.4f, %.4f, %.4f\r\n", imu.test[0], imu.test[1], imu.test[2]);
+    
+    uart_buf_len = sprintf(uart_buf, "acce:  %.4f, %.4f, %.4f; gyro:  %.4f, %.4f, %.4f  || %.4f, %.4f, %.4f\r\n", imu.ax, imu.ay, imu.az, imu.gx, imu.gy, imu.gz, imu.test[0], imu.test[1], imu.test[2]);
+
+    // uart_buf_len = sprintf(uart_buf, "Q:  %.4f, %.4f, %.4f, %.4f\r\n", state.orientation.w, state.orientation.x, state.orientation.y, state.orientation.z);
     HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
     
     //IMU end

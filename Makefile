@@ -71,7 +71,9 @@ Core/Src/motor.cpp \
 Core/Src/Propulsion_Sys/t200.cpp \
 Core/Src/Propulsion_Sys/propulsion_sys.cpp \
 Core/Src/robot_arm.cpp \
+Core/Src/Datatype/quaternion.cpp \
 Core/Src/Sensor/spi_sensor.cpp \
+Core/Src/Sensor/Adafruit_AHRS_Madgwick.cpp \
 Core/Src/Sensor/mpu9250.cpp 
 
 # ASM sources
