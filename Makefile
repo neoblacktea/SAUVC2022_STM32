@@ -74,7 +74,9 @@ Core/Src/robot_arm.cpp \
 Core/Src/Datatype/quaternion.cpp \
 Core/Src/Sensor/spi_sensor.cpp \
 Core/Src/Sensor/Adafruit_AHRS_Madgwick.cpp \
-Core/Src/Sensor/mpu9250.cpp 
+Core/Src/Sensor/mpu9250.cpp  \
+Core/Src/dvl_reader.cpp \
+Core/Src/read_data.cpp
 
 # ASM sources
 ASM_SOURCES =  \

@@ -31,6 +31,8 @@
 #include "robot_arm.h"
 #include "Sensor/mpu9250.h"
 #include <stdio.h>
+#include "dvl_reader.h"
+#include "read_data.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,11 +63,16 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+//Uart Communication Class
+Read_data R;
+Dvl_reader D;
 
 //data receive from Rpi
+uint8_t zhc = 0;
 float yaw_sonar;  //yaw angle get from sonar
 geometry::Vector ex;
 geometry::Vector ev;
+// float velocity[3]; //from sonar
 int arm_angle[3] = {0};
 
 /* USER CODE END 0 */
@@ -84,11 +91,11 @@ int main(void)
   //sensor
   Mpu9250 imu;
 
-  Dynamics state = {{0}, {}, {0}, {0}};
+  Dynamics state = {0};
   // Kinematics control_input = {0};
   Kinematics control_input = {{1, 2, 3}, {4, 5, 6}};
-  // Propulsion_Sys propulsion_sys;
-  T200 m_test;
+  Propulsion_Sys propulsion_sys;
+
 
   //Robot Arm
   Robot_Arm arm;
@@ -120,16 +127,25 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
   /* USER CODE BEGIN 2 */
+  //Uart Interrupt
+  HAL_UART_Receive_IT(&huart5, &zhc, 1);
+  HAL_UART_Receive_IT(&huart4, &D.receieve_char, 1);
+  R.receieve();
 
   //IMU begin
   imu.set(&hspi2, GPIOB, GPIO_PIN_12);
   
   //IMU end
 
-  // propulsion_sys.set_timer(&htim2, &htim8);
-  m_test.set(&htim2, TIM_CHANNEL_1);
+  propulsion_sys.set_timer(&htim2, &htim8);
+
   arm.set(&htim4, arm_angle);
   HAL_Delay(3000);
+  
+  while(zhc!='\n')
+  {
+
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -139,7 +155,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     //IMU begin
-    // imu.update(state);
+    imu.update(state);
     // uart_buf_len = sprintf(uart_buf, "acce:  %.4f, %.4f, %.4f; gyro:  %.4f, %.4f, %.4f\r\n", imu.ax, imu.ay, imu.az, imu.gx, imu.gy, imu.gz);
     // uart_buf_len = sprintf(uart_buf, "%.4f, %.4f, %.4f\r\n", imu.test[0], imu.test[1], imu.test[2]);
     
@@ -151,9 +167,8 @@ int main(void)
     //IMU end
 
 
-    // propulsion_sys.allocate(control_input);
-    m_test.output(0.5);
-    // arm.move(arm_angle);
+    propulsion_sys.allocate(control_input);
+    arm.move(arm_angle);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -205,7 +220,30 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  if(huart->Instance == UART5)
+  {
+    R.receieve();
+    if(R.access_ok() == true)
+    {
+      yaw_sonar = R.get_yaw();
+      ex = R.get_geometry_vector();
+      ev.x = R.get_vel0();
+      ev.y = R.get_vel1();
+      ev.z = R.get_vel2();
+      arm_angle[0] = R.get_joint0();
+      arm_angle[1] = R.get_joint1();
+      arm_angle[2] = R.get_joint2();
+      R.access_init();
+    }
+  }
+  else if(huart->Instance == UART4)
+  {
+    D.filling();
+    HAL_UART_Receive_IT(&huart4, &D.receieve_char, 1);
+  }
+}
 /* USER CODE END 4 */
 
 /**

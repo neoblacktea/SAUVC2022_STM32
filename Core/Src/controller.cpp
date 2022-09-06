@@ -1,7 +1,7 @@
 #include "controller.h"
 #include "math.h"
 
-Controller::Controller(float x, float v, float R, float Omega, float alpha): Kx(x), Kv(v), KR(R), KOmega(Omega), Alpha_sonar(alpha)
+Controller::Controller(geometry::Vector &x, geometry::Vector &v, geometry::Vector &R, geometry::Vector &Omega, float alpha): Kx(x), Kv(v), KR(R), KOmega(Omega), Alpha_sonar(alpha)
 {
 }
 
@@ -18,5 +18,5 @@ void Controller::adjust_yaw(Dynamics &s, float ys)
 void Controller::update(Dynamics &s, const geometry::Vector &ex, const geometry::Vector &ev, float yaw_sonar, Kinematics &ctrl_input)
 {
     adjust_yaw(s, yaw_sonar);
-    
+
 }
