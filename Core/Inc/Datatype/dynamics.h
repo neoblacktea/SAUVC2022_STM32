@@ -2,14 +2,7 @@
 #define DYNAMICS_H
 
 #include "vector.h"
-
-struct Quaternion
-{
-    float w;
-    float x;
-    float y;
-    float z;
-};
+#include "quaternion.h"
 
 struct Kinematics
 {
