@@ -62,6 +62,12 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+//data receive from Rpi
+float yaw_sonar;  //yaw angle get from sonar
+geometry::Vector ex;
+geometry::Vector ev;
+int arm_angle[3] = {0};
+
 /* USER CODE END 0 */
 
 /**
@@ -71,22 +77,21 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  uint8_t test = 'A';
+  //debug
   char uart_buf[100];
   int uart_buf_len;
-  // Spi_Sensor imu;
+
+  //sensor
   Mpu9250 imu;
-
-
 
   Dynamics state = {{0}, {}, {0}, {0}};
   // Kinematics control_input = {0};
   Kinematics control_input = {{1, 2, 3}, {4, 5, 6}};
-  Propulsion_Sys propulsion_sys;
+  // Propulsion_Sys propulsion_sys;
+  T200 m_test;
 
   //Robot Arm
   Robot_Arm arm;
-  int arm_angle[3] = {0};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -121,8 +126,10 @@ int main(void)
   
   //IMU end
 
-  propulsion_sys.set_timer(&htim2, &htim8);
+  // propulsion_sys.set_timer(&htim2, &htim8);
+  m_test.set(&htim2, TIM_CHANNEL_1);
   arm.set(&htim4, arm_angle);
+  HAL_Delay(3000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -132,21 +139,21 @@ int main(void)
     /* USER CODE END WHILE */
 
     //IMU begin
-    imu.update(state);
+    // imu.update(state);
     // uart_buf_len = sprintf(uart_buf, "acce:  %.4f, %.4f, %.4f; gyro:  %.4f, %.4f, %.4f\r\n", imu.ax, imu.ay, imu.az, imu.gx, imu.gy, imu.gz);
     // uart_buf_len = sprintf(uart_buf, "%.4f, %.4f, %.4f\r\n", imu.test[0], imu.test[1], imu.test[2]);
     
-    uart_buf_len = sprintf(uart_buf, "acce:  %.4f, %.4f, %.4f; gyro:  %.4f, %.4f, %.4f  || %.4f, %.4f, %.4f\r\n", imu.ax, imu.ay, imu.az, imu.gx, imu.gy, imu.gz, imu.test[0], imu.test[1], imu.test[2]);
+    // uart_buf_len = sprintf(uart_buf, "acce:  %.4f, %.4f, %.4f; gyro:  %.4f, %.4f, %.4f  || %.4f, %.4f, %.4f\r\n", imu.ax, imu.ay, imu.az, imu.gx, imu.gy, imu.gz, imu.test[0], imu.test[1], imu.test[2]);
 
     // uart_buf_len = sprintf(uart_buf, "Q:  %.4f, %.4f, %.4f, %.4f\r\n", state.orientation.w, state.orientation.x, state.orientation.y, state.orientation.z);
-    HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
+    // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
     
     //IMU end
 
 
-    propulsion_sys.allocate(control_input);
-
-    arm.move(arm_angle);
+    // propulsion_sys.allocate(control_input);
+    m_test.output(0.5);
+    // arm.move(arm_angle);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
