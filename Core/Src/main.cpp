@@ -96,7 +96,7 @@ int main(void)
   Mpu9250 imu;
 
   Dynamics state = {0};
-  Kinematics control_input = {0};
+  Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
   // Kinematics control_input = {{1, 2, 3}, {4, 5, 6}};
 
   Controller controller({1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, 0);
@@ -153,6 +153,7 @@ int main(void)
   HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
   
   // while(zhc!='\n');
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -161,34 +162,17 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-    //IMU begin
+    //IMU
     imu.update(state);
+
+    //Controller
     controller.update(state, ex, ev, yaw_sonar, control_input);
 
-    // uart_buf_len = sprintf(uart_buf, "acce:  %.4f, %.4f, %.4f; gyro:  %.4f, %.4f, %.4f\r\n", imu.ax, imu.ay, imu.az, imu.gx, imu.gy, imu.gz);
-    // Quaternion q_test(0, 0, 0, 1);
-    // q_test = state.orientation.conjugate() * q_test * state.orientation;
-    // uart_buf_len = sprintf(uart_buf, "%.4f, %.4f, %.4f\r\n", imu.test[0], imu.test[1], imu.test[2]);
-    
-    // uart_buf_len =     imu.update(state);
-    // controller.update(state, ex, ev, yaw_sonar, control_input);
-    // sprintf(uart_buf, "acce:  %.4f, %.4f, %.4f; gyro:  %.4f, %.4f, %.4f  || %.4f, %.4f, %.4f\r\n", imu.ax, imu.ay, imu.az, imu.gx, imu.gy, imu.gz, imu.test[0], imu.test[1], imu.test[2]);
-    // uart_buf_len = sprintf(uart_buf, "Q:  %.2f, %.2f, %.2f, %.2f\r\n", q_test.w, q_test.x, q_test.y, q_test.z);
-
-    // uart_buf_len = sprintf(uart_buf, "Q:  %.2f, %.2f, %.2f, %.2f; Euler Angle: %.2f, %.2f, %.2f\r\n", state.orientation.w, state.orientation.x, state.orientation.y, state.orientation.z, imu.test[0], imu.test[1], imu.test[2]);
-    // uart_buf_len = sprintf(uart_buf, "Q:  %.2f, %.2f, %.2f, %.2f; eR: %.2f, %.2f, %.2f\r\n", state.orientation.w, state.orientation.x, state.orientation.y, state.orientation.z, controller.eR.x, controller.eR.y, controller.eR.z);
-
-    // HAL_UART_Transmit(&huart4, (uint8_t*) uart_buf, uart_buf_len, 1000);
-    //IMU end
-
+    //Allocate
     propulsion_sys.allocate(control_input);
 
+    //Robot arm
     arm.move(arm_angle);
-
-    // uart_buf_len = sprintf(uart_buf, "eR: %.2f, %.2f, %.2f; Motor:  %.2f, %.2f, %.2f, %.2f, %.2f, %.2f\r\n", controller.eR.x, controller.eR.y, controller.eR.z, control_input.linear.x,control_input.linear.y, control_input.linear.z, control_input.angular.x, control_input.angular.y, control_input.angular.z);
-    uart_buf_len = sprintf(uart_buf, "Motor:  %.2f, %.2f, %.2f, %.2f, %.2f, %.2f\r\n", control_input.linear.x,control_input.linear.y, control_input.linear.z, control_input.angular.x, control_input.angular.y, control_input.angular.z);
-    // uart_buf_len = sprintf(uart_buf, "DVL: %f, %f, %f, %f\r\n", D.get_x(), D.get_y(), D.get_z1(), D.get_z2());
-    HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
 
     /* USER CODE BEGIN 3 */
   }

@@ -1,6 +1,14 @@
 #include "controller.h"
 #include "math.h"
 
+/**
+ * @brief Constructor of Controller
+ * @param x Kx
+ * @param v Kv
+ * @param R KR
+ * @param Omega KOmega
+ * @param alpha 0~1 how much we trust sonar yaw
+ */ 
 Controller::Controller(geometry::Vector x, geometry::Vector v, geometry::Vector R, geometry::Vector Omega, float alpha): Kx(x), Kv(v), KR(R), KOmega(Omega), Alpha_sonar(alpha)
 {
 }
