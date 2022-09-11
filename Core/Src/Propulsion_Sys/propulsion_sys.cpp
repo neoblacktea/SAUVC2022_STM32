@@ -41,29 +41,29 @@ void Propulsion_Sys::set_timer(TIM_HandleTypeDef *tim1, TIM_HandleTypeDef *tim2)
 void Propulsion_Sys::allocate(const Kinematics &ctrl_input)
 {
     //allocation matrix expand
-    thrust[0] = ctrl_input.linear.x * 0 + ctrl_input.linear.y * 0 + ctrl_input.linear.z * -0.25
-                + ctrl_input.angular.x * -1.3514 + ctrl_input.angular.y * 1.1035 + ctrl_input.angular.z * 0;
+    thrust[0] = ctrl_input.linear.x * 0 + ctrl_input.linear.y * 0 + ctrl_input.linear.z * 0.25
+                + ctrl_input.angular.x * 1.1035 + ctrl_input.angular.y * -1.3514 + ctrl_input.angular.z * 0;
 
-    thrust[1] = ctrl_input.linear.x * 0 + ctrl_input.linear.y * 0 + ctrl_input.linear.z * -0.25
-                + ctrl_input.angular.x * 1.3514 + ctrl_input.angular.y * 1.1035 + ctrl_input.angular.z * 0;
+    thrust[1] = ctrl_input.linear.x * 0 + ctrl_input.linear.y * 0 + ctrl_input.linear.z * 0.25
+                + ctrl_input.angular.x * 1.1035 + ctrl_input.angular.y * 1.3514 + ctrl_input.angular.z * 0;
 
-    thrust[2] = ctrl_input.linear.x * 0 + ctrl_input.linear.y * 0 + ctrl_input.linear.z * -0.25
-                + ctrl_input.angular.x * -1.3514 + ctrl_input.angular.y * -1.1035 + ctrl_input.angular.z * 0;
+    thrust[2] = ctrl_input.linear.x * 0 + ctrl_input.linear.y * 0 + ctrl_input.linear.z * 0.25
+                + ctrl_input.angular.x * -1.1035 + ctrl_input.angular.y * -1.3514 + ctrl_input.angular.z * 0;
 
-    thrust[3] = ctrl_input.linear.x * 0 + ctrl_input.linear.y * 0 + ctrl_input.linear.z * -0.25
-                + ctrl_input.angular.x * 1.3514 + ctrl_input.angular.y * -1.1035 + ctrl_input.angular.z * 0;
+    thrust[3] = ctrl_input.linear.x * 0 + ctrl_input.linear.y * 0 + ctrl_input.linear.z * 0.25
+                + ctrl_input.angular.x * -1.1035 + ctrl_input.angular.y * 1.3514 + ctrl_input.angular.z * 0;
 
-    thrust[4] = ctrl_input.linear.x * 0.3536 + ctrl_input.linear.y * -0.3536 + ctrl_input.linear.z * 0 
-                + ctrl_input.angular.x * 0 + ctrl_input.angular.y * 0 + ctrl_input.angular.z * -0.783;
+    thrust[4] = ctrl_input.linear.x * -0.3536 + ctrl_input.linear.y * 0.3536 + ctrl_input.linear.z * 0 
+                + ctrl_input.angular.x * 0 + ctrl_input.angular.y * 0 + ctrl_input.angular.z * 0.783;
 
     thrust[5] = ctrl_input.linear.x * 0.3536 + ctrl_input.linear.y * 0.3536 + ctrl_input.linear.z * 0 
-                + ctrl_input.angular.x * 0 + ctrl_input.angular.y * 0 + ctrl_input.angular.z * 0.783;
-
-    thrust[6] = ctrl_input.linear.x * 0.3536 + ctrl_input.linear.y * 0.3536 + ctrl_input.linear.z * 0 
                 + ctrl_input.angular.x * 0 + ctrl_input.angular.y * 0 + ctrl_input.angular.z * -0.783;
 
-    thrust[7] = ctrl_input.linear.x * 0.3536 + ctrl_input.linear.y * -0.3536 + ctrl_input.linear.z * 0 
+    thrust[6] = ctrl_input.linear.x * 0.3536 + ctrl_input.linear.y * 0.3536 + ctrl_input.linear.z * 0 
                 + ctrl_input.angular.x * 0 + ctrl_input.angular.y * 0 + ctrl_input.angular.z * 0.783;
+
+    thrust[7] = ctrl_input.linear.x * -0.3536 + ctrl_input.linear.y * 0.3536 + ctrl_input.linear.z * 0 
+                + ctrl_input.angular.x * 0 + ctrl_input.angular.y * 0 + ctrl_input.angular.z * -0.783;
 
     //output thurst
     for (int i = 0; i < 8; i++)
