@@ -67,6 +67,7 @@ Quaternion Quaternion::operator*(const float &scalar)
     x *= scalar;
     y *= scalar;
     z *= scalar;
+    return (*this);
 }
 
 void Quaternion::operator*=(const Quaternion &q2)

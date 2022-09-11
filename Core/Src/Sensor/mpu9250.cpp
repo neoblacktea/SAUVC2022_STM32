@@ -1,7 +1,7 @@
 #include "Sensor/mpu9250.h"
 #include "Sensor/mpu9250_register_map.h"
 
-Mpu9250::Mpu9250(/* args */)
+Mpu9250::Mpu9250(/* args */): q_EtoA(0, 0.707, 0.707, 0), q_ItoE(0.707, -0.707, 0, 0)
 {
 
 }
@@ -49,18 +49,17 @@ void Mpu9250::update(Dynamics &s)
 	gy = (int)(gy * 1000) / 1000.0;
 	gz = (int)(gz * 1000) / 1000.0;
 
-	// float ax = (float)(read_value(ACCEL_XOUT_H) * 599) / (float)1000000;
-	// float ay = (float)(read_value(ACCEL_YOUT_H) * 599) / (float)1000000;
-	// float az = (float)(read_value(ACCEL_ZOUT_H) * 599) / (float)1000000;
-	// float gx = (float)(read_value(GYRO_XOUT_H) * 133) / (float)1000000;
-	// float gy = (float)(read_value(GYRO_YOUT_H) * 133) / (float)1000000;
-	// float gz = (float)(read_value(GYRO_ZOUT_H) * 133) / (float)1000000;
-
 	filter.updateIMU(gx, gy, gz, ax, ay, az);
-	filter.getQuaternion(&s.orientation.w, &s.orientation.x, &s.orientation.y, &s.orientation.z);
-	test[0] = filter.getRoll();
-	test[1] = filter.getPitch();
-	test[2] = filter.getYaw();
+
+	filter.getQuaternion(&q_filter.w,&q_filter.x, &q_filter.y, &q_filter.z);
+	s.orientation = q_EtoA.conjugate() * (q_filter * q_ItoE) * q_EtoA;
+
+	s.velocity.angular.x = gx;
+	s.velocity.angular.y = gy;
+	s.velocity.angular.z = gz;
+	// test[0] = atan2f(s.orientation.w * s.orientation.x + s.orientation.y * s.orientation.z, 0.5f - s.orientation.x * s.orientation.x - s.orientation.y * s.orientation.y) * 57.29578f;
+	// test[1] = asinf(-2.0f * (s.orientation.x * s.orientation.z - s.orientation.w * s.orientation.y)) * 57.29578f;
+	// test[2] = filter.getYaw();
 }
 
 

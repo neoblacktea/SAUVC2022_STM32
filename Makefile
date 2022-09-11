@@ -76,7 +76,8 @@ Core/Src/Sensor/spi_sensor.cpp \
 Core/Src/Sensor/Adafruit_AHRS_Madgwick.cpp \
 Core/Src/Sensor/mpu9250.cpp  \
 Core/Src/dvl_reader.cpp \
-Core/Src/read_data.cpp
+Core/Src/read_data.cpp \
+Core/Src/controller.cpp
 
 # ASM sources
 ASM_SOURCES =  \
