@@ -34,6 +34,7 @@
 #include "dvl_reader.h"
 #include "read_data.h"
 #include "controller.h"
+#include "Sensor/bar02.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,9 +72,10 @@ Dvl_reader D;
 
 //data receive from Rpi
 uint8_t zhc = 0;
-float yaw_sonar;  //yaw angle get from sonar
-geometry::Vector ex;
-geometry::Vector ev;
+float yaw_sonar = 0;  //yaw angle get from sonar
+float z_d = 1;  //desired depth
+geometry::Vector ex = {0};
+geometry::Vector ev = {0};
 
 // float velocity[3]; //from sonar
 int arm_angle[3] = {0};
@@ -94,6 +96,7 @@ int main(void)
 
   //sensor
   Mpu9250 imu;
+  Bar02 depth_sensor;
 
   Dynamics state = {0};
   Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
@@ -141,6 +144,8 @@ int main(void)
 
   //Sensor
   imu.set(&hspi2, GPIOB, GPIO_PIN_12);
+  if (!depth_sensor.set(&hi2c1))
+    return -1;
   
   //Output
   propulsion_sys.set_timer(&htim2, &htim8);
@@ -164,6 +169,10 @@ int main(void)
 
     //IMU
     imu.update(state);
+    ex.z = /*z_d - */depth_sensor.read_value();
+
+    uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", ex.z);
+    HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
 
     //Controller
     controller.update(state, ex, ev, yaw_sonar, control_input);

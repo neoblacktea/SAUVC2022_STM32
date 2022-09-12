@@ -1,5 +1,4 @@
 #include "stm32f4xx.h"
-// #include "i2c.h"
 
 class Bar02{
     public:

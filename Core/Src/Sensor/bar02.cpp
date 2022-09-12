@@ -1,4 +1,4 @@
-#include "../../Inc/Sensor/bar02.h"
+#include "Sensor/bar02.h"
 
 // sensor address
 const uint8_t MS5837_ADDR = 0x76;
@@ -129,3 +129,4 @@ uint8_t Bar02::crc4(uint16_t n_prom[]) {
 // in while loop  (USER CODE END WHILE)
     uart_buf_len = sprintf(uart_buf, "Depth: %f \r\n", depth_sensor.read_value());
     HAL_UART_Transmit(&huart4, (uint8_t*) uart_buf, uart_buf_len, 1000);
+*/
