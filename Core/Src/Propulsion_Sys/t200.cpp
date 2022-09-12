@@ -60,6 +60,13 @@ void T200::output(const float &force)
         signal = SIGNAL[mid + 1];
     else
         signal = SIGNAL[mid];
+
+    //Boundary 1244-1752
+    if (signal > 1752)
+        signal = 1752;
+    else if (signal < 1244)
+        signal = 1244;
+
     //output PWM signal
     motor.output(signal);
 }
