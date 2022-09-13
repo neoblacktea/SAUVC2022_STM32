@@ -169,7 +169,7 @@ int main(void)
 
     //IMU
     imu.update(state);
-    ex.z = /*z_d - */depth_sensor.read_value();
+    ex.z = z_d - depth_sensor.read_value();
 
     uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", ex.z);
     HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
