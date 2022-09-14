@@ -17,26 +17,27 @@ Controller::~Controller()
 {
 }
 
-void Controller::adjust_yaw(Dynamics &s, float ys)
-{
-    Quaternion qy(cosf(ys / 2.0), 0, 0, sinf(ys / 2.0));
-    s.orientation = (1.0 - Alpha_sonar) * s.orientation + Alpha_sonar * qy;
-}
+// void Controller::adjust_yaw(Dynamics &s, float ys)
+// {
+//     Quaternion qy(cosf(ys / 2.0), 0, 0, sinf(ys / 2.0));
+//     s.orientation = (1.0 - Alpha_sonar) * s.orientation + Alpha_sonar * qy;
+// }
 
 void Controller::update(Dynamics &s, const geometry::Vector &ex, const geometry::Vector &ev, float yaw_sonar, Kinematics &ctrl_input)
 {
-    adjust_yaw(s, yaw_sonar);
+    // adjust_yaw(s, yaw_sonar);
     eR.x = (-4) * s.orientation.w * s.orientation.x;
     eR.y = (-4) * s.orientation.w * s.orientation.y;
-    eR.z = (-4) * s.orientation.w * s.orientation.z;
+    eR.z = (-1) * yaw_sonar;
     eOmega.x = s.velocity.angular.x;
     eOmega.y = s.velocity.angular.y;
     eOmega.z = s.velocity.angular.z;
 
     ctrl_input.linear.x = Kx.x * ex.x + Kv.x * ev.x;
     ctrl_input.linear.y = Kx.y * ex.y + Kv.y * ev.y;
-    ctrl_input.linear.z = Kx.z * ex.z + Kv.z * ev.z;
+    ctrl_input.linear.z = Kx.z * ex.z + Kv.z * ev.z - weight + buoyancy;
     ctrl_input.angular.x = KR.x * eR.x + KOmega.x * eOmega.x;
     ctrl_input.angular.y = KR.y * eR.y + KOmega.y * eOmega.y;
-    ctrl_input.angular.z = KR.z * eR.z + KOmega.z * eOmega.z;
+    if (eR.x < 0.001 && eR.y < 0.001)
+        ctrl_input.angular.z = KR.z * eR.z + KOmega.z * eOmega.z;
 }

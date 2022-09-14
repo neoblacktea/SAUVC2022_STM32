@@ -3,6 +3,9 @@
 
 #include "Datatype/dynamics.h"
 
+const float weight = 0;
+const float buoyancy = 0;
+
 class Controller
 {
 private:
@@ -19,7 +22,7 @@ private:
 public:
     Controller(geometry::Vector x, geometry::Vector v, geometry::Vector R, geometry::Vector Omega, float alpha);
     ~Controller();
-    void adjust_yaw(Dynamics &s, float ys);
+    // void adjust_yaw(Dynamics &s, float ys);
     void update(Dynamics &s, const geometry::Vector &ex, const geometry::Vector &ev, float yaw_sonar, Kinematics &ctrl_input);
 };
 
