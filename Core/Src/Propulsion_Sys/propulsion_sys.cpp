@@ -65,6 +65,12 @@ void Propulsion_Sys::allocate(const Kinematics &ctrl_input)
     thrust[7] = ctrl_input.linear.x * -0.3536 + ctrl_input.linear.y * 0.3536 + ctrl_input.linear.z * 0 
                 + ctrl_input.angular.x * 0 + ctrl_input.angular.y * 0 + ctrl_input.angular.z * -0.783;
 
+    //Reverse direction
+    thrust[0] *= -1;
+    thrust[3] *= -1;
+    thrust[4] *= -1;
+    thrust[7] *= -1;
+
     //output thurst
     for (int i = 0; i < 8; i++)
         motor[i].output(thrust[i]);
