@@ -72,6 +72,7 @@ Dvl_reader D;
 
 //data receive from Rpi
 uint8_t zhc = 0;
+float desired_depth;
 float yaw_sonar = 0;  //yaw angle get from sonar
 float z_d = 1;  //desired depth
 geometry::Vector ex = {0};
@@ -155,7 +156,7 @@ int main(void)
 
   //debug
   uart_buf_len = sprintf(uart_buf, "ready\r\n");
-  HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
+  //HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
   
   // while(zhc!='\n');
 
@@ -172,7 +173,7 @@ int main(void)
     ex.z = z_d - depth_sensor.read_value();
 
     uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", ex.z);
-    HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
+    //HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
 
     //Controller
     controller.update(state, ex, ev, yaw_sonar, control_input);
@@ -241,6 +242,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     R.receieve();
     if(R.access_ok() == true)
     {
+      desired_depth = R.get_depth();
       yaw_sonar = R.get_yaw();
       ex = R.get_geometry_vector();
       ev.x = R.get_vel0();
@@ -249,6 +251,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
       arm_angle[0] = R.get_joint0();
       arm_angle[1] = R.get_joint1();
       arm_angle[2] = R.get_joint2();
+      R.skip_indexIncrease_init();
       R.access_init();
     }
   }
