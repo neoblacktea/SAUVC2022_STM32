@@ -72,6 +72,7 @@ Dvl_reader D;
 
 //data receive from Rpi
 uint8_t zhc = 0;
+float desired_depth;
 float yaw_sonar = 0;  //yaw angle get from sonar
 float z_d = 1;  //desired depth
 geometry::Vector ex = {0, 1, 0};
@@ -144,8 +145,6 @@ int main(void)
 
   //Sensor
   imu.set(&hspi2, GPIOB, GPIO_PIN_12);
-  // for (int i = 0; i < 1000; i++)
-  //   imu.update(state);
   if (!depth_sensor.set(&hi2c1))
     return -1;
   
@@ -277,6 +276,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     R.receieve();
     if(R.access_ok() == true)
     {
+      desired_depth = R.get_depth();
       yaw_sonar = R.get_yaw();
       ex = R.get_geometry_vector();
       ev.x = R.get_vel0();
@@ -285,6 +285,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
       arm_angle[0] = R.get_joint0();
       arm_angle[1] = R.get_joint1();
       arm_angle[2] = R.get_joint2();
+      R.skip_indexIncrease_init();
       R.access_init();
     }
   }

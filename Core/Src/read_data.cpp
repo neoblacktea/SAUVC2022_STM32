@@ -5,10 +5,11 @@
 
 Read_data::Read_data()
 {
-    index = 0;
+    index = -1;
 	accessible = false;
+	skip_indexIcrease = false;
 	ch = '\n';
-	size_of_data = 40; // yaw + v + velocity + joint = 4+12+12+12 = 40
+	size_of_data = 44; // depth + yaw + v + velocity + joint = 4+4+12+12+12 = 44
 }
 
 float Read_data::get_single_num()
@@ -27,6 +28,7 @@ float Read_data::get_single_num()
 void Read_data::assign_num()
 {
 	index = 0;
+	depth = get_single_num();
 	yaw = get_single_num();
 	v.x = get_single_num();
 	v.y = get_single_num();
@@ -37,22 +39,25 @@ void Read_data::assign_num()
 	joint[0] = get_single_num();
 	joint[1] = get_single_num();
 	joint[2] = get_single_num();
-	index = 0;
+	index = -1;
+	skip_indexIcrease = true;
 	accessible = true;
 }
 
-void Read_data::receieve()
+void Read_data::receieve() 
 {
-	if(index == size_of_data )
-			assign_num();
-
-	if(index < size_of_data ) //index max 26
+	if(index < size_of_data ) 
 	{	
 		HAL_UART_Receive_IT(&huart5, &ch, 1);
 		if(ch != '\n')
 		{
-			temp[index] = ch;
 			index++;
+			temp[index] = ch;
 		}
 	}
+	if(index == (size_of_data-1) )
+	{
+			assign_num();
+	}
 }
+
