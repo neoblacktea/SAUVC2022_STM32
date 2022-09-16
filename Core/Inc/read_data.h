@@ -5,8 +5,8 @@ class Read_data
 {
     int index; //which element of std::vector
     int size_of_data;
+    uint8_t ch;
     bool accessible;
-    bool skip_indexIcrease;
     uint8_t temp[44];
     float depth;
     float yaw;
@@ -15,7 +15,6 @@ class Read_data
     float joint[3];
 
 public:
-    uint8_t ch;
     Read_data();
     float get_single_num();
     void assign_num();
@@ -25,7 +24,6 @@ public:
     float get_depth(){return depth;};
     float get_yaw(){return yaw;};
     bool access_ok(){return accessible;};
-    void skip_indexIncrease_init(){skip_indexIcrease = false;};
     void access_init(){accessible = false;};
     geometry::Vector get_geometry_vector(){return v;};
     float get_joint0(){return joint[0];};

@@ -100,8 +100,8 @@ int main(void)
   Bar02 depth_sensor;
 
   Dynamics state = {0};
-  Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
-  // Kinematics control_input = {{0, 1, 0}, {0, 0, 0}};
+  //Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
+  Kinematics control_input = {{0, 1, 0}, {0, 0, 0}};
 
   Controller controller({1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, {0.5, 0.5, 0}, {1.0, 1.0, 0}, 0);
   Propulsion_Sys propulsion_sys;
@@ -141,7 +141,7 @@ int main(void)
   //Uart Interrupt
   HAL_UART_Receive_IT(&huart5, &zhc, 1);
   HAL_UART_Receive_IT(&huart4, &D.receieve_char, 1);
-  R.receieve();
+  //R.receieve();
 
   //Sensor
   imu.set(&hspi2, GPIOB, GPIO_PIN_12);
@@ -158,10 +158,10 @@ int main(void)
   HAL_Delay(3000);
 
   //debug
-  uart_buf_len = sprintf(uart_buf, "ready\r\n");
-  HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
+  // uart_buf_len = sprintf(uart_buf, "ready\r\n");
+  // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
   
-  // while(zhc!='\n');
+ //  while(zhc!='\n');
 
   /* USER CODE END 2 */
 
@@ -182,12 +182,13 @@ int main(void)
 
     // uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", ex.z);
     // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
+    //HAL_Delay(100);
 
     //Controller
-    controller.update(state, ex, ev, yaw_sonar, control_input);
+    //controller.update(state, ex, ev, yaw_sonar, control_input);
 
     //Allocate
-    propulsion_sys.allocate(control_input);
+   // propulsion_sys.allocate(control_input);
 
     //Motor take turns
     // propulsion_sys.motor[0].output(-0.5);
@@ -285,7 +286,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
       arm_angle[0] = R.get_joint0();
       arm_angle[1] = R.get_joint1();
       arm_angle[2] = R.get_joint2();
-      R.skip_indexIncrease_init();
       R.access_init();
     }
   }

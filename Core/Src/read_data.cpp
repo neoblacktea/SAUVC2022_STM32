@@ -7,7 +7,6 @@ Read_data::Read_data()
 {
     index = -1;
 	accessible = false;
-	skip_indexIcrease = false;
 	ch = '\n';
 	size_of_data = 44; // depth + yaw + v + velocity + joint = 4+4+12+12+12 = 44
 }
@@ -40,7 +39,6 @@ void Read_data::assign_num()
 	joint[1] = get_single_num();
 	joint[2] = get_single_num();
 	index = -1;
-	skip_indexIcrease = true;
 	accessible = true;
 }
 
