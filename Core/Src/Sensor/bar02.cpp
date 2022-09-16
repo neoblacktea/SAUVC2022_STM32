@@ -215,7 +215,7 @@ float Bar02::temperature()
 
 float Bar02::depth() 
 {
-	return (pressure(Bar02::Pa) - 101300) / (fluidDensity * 9.80665);
+	return (pressure(Bar02::Pa) - 101300) / (fluidDensity * 9.80665) + 0.195; // from experiment we measure the offset is 0.195m
 }
 
 float Bar02::altitude() 

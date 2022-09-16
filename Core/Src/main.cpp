@@ -178,11 +178,11 @@ int main(void)
     // uart_buf_len = sprintf(uart_buf, "%.3f %.3f %.3f %.3f\r\n", imu.q_ItoE.w,  imu.q_ItoE.x,  imu.q_ItoE.y, imu.q_ItoE.z);
 
     depth_sensor.read_value();
-    // ex.z = z_d - depth_sensor.depth();
+    ex.z = z_d - depth_sensor.depth();
 
-    uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", depth_sensor.depth());
+    //uart_buf_len = sprintf(uart_buf, "Depth: %.3f %.3f\r\n", depth_sensor.depth(), depth_sensor.depth() + 0.195);
     // uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", depth_sensor._model);
-    HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
+    //HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
 
     //Controller
     controller.update(state, ex, ev, yaw_sonar, control_input);
@@ -191,7 +191,7 @@ int main(void)
     // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
     
     //Allocate
-   // propulsion_sys.allocate(control_input);
+    propulsion_sys.allocate(control_input);
 
     //Motor take turns test*-------------------------------------------
     // propulsion_sys.motor[0].output(-0.5);
