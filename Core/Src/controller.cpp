@@ -1,6 +1,5 @@
 #include "controller.h"
 #include "math.h"
-// #include "Datatype/matrix.h"
 
 void er_mul(float **a, float **b, float **result)
 {
@@ -21,7 +20,7 @@ void er_mul(float **a, float **b, float **result)
     for(int i = 0; i < 3; i++)
     {
         for(int j = 0; j < 3; j++){
-            result[i][j] = 0.5 * (first[i][j] - second[i][j]);
+            result[i][j] = first[i][j] - second[i][j];
         }
     }
 }
@@ -90,16 +89,12 @@ void Controller::set(const Quaternion &qd)
 
 void Controller::update(Dynamics &s, const geometry::Vector &ex, const geometry::Vector &ev, float yaw_sonar, Kinematics &ctrl_input)
 {
-    // adjust_yaw(s, yaw_sonar);
-    eR.x = (-4) * s.orientation.w * s.orientation.x;
-    eR.y = (-4) * s.orientation.w * s.orientation.y;
+    //Calculate attitude error
+    qtoR(s.orientation, R);
+    er_mul(Rd, R, Re);
+    eR.x = Re[2][1];
+    eR.y = Re[0][2];
     eR.z = (-1) * yaw_sonar;
-
-    // qtoR(s.orientation, R);
-    // er_mul(Rd, R, Re);
-    // eR.x = Re[2][1];
-    // eR.y = Re[0][2];
-    // eR.z = (-1) * yaw_sonar;
 
     eOmega.x = s.velocity.angular.x;
     eOmega.y = s.velocity.angular.y;

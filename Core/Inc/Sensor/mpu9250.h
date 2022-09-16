@@ -10,12 +10,14 @@ class Mpu9250:Spi_Sensor
 private:
 	Adafruit_Madgwick filter;
 	Quaternion q_EtoA;  //Earth frame to AUV frame
-	// Quaternion q_ItoE;  //Sensor frame to Earth frame
+	Quaternion q_ItoE;  //Sensor frame to Earth frame
 	Quaternion q_filter;
-	// Quaternion q_est = {1, 0, 0, 0};
-	// Quaternion q_est_prev;
-	// Quaternion gradient;
-	// const float BETA = 0.0756;
+	float ax;
+	float ay;
+	float az;
+	float gx;
+	float gy;
+	float gz;
 
 public:
     Mpu9250(/* args */);
@@ -25,16 +27,7 @@ public:
 	int16_t read_value(uint8_t type);
 	void update(Dynamics &s);
 
-	Quaternion q_ItoE;  //Sensor frame to Earth frame
-	float test[3];
-	// Quaternion q_a;
-	float ax;
-	float ay;
-	float az;
-	float gx;
-	float gy;
-	float gz;
-	// Quaternion q_w;
+	// float test[3];
 };
 
 #endif
