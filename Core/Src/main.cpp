@@ -147,6 +147,7 @@ int main(void)
   imu.set(&hspi2, GPIOB, GPIO_PIN_12);
   if (!depth_sensor.set(&hi2c1))
     return -1;
+  depth_sensor.setFluidDensity(997);
   
   //Controller
   imu.update(state);
@@ -176,10 +177,12 @@ int main(void)
     // uart_buf_len = sprintf(uart_buf, "%.3f %.3f\r\n", imu.test[0], imu.test[1]);
     // uart_buf_len = sprintf(uart_buf, "%.3f %.3f %.3f %.3f\r\n", imu.q_ItoE.w,  imu.q_ItoE.x,  imu.q_ItoE.y, imu.q_ItoE.z);
 
-    ex.z = z_d - depth_sensor.read_value();
+    depth_sensor.read_value();
+    // ex.z = z_d - depth_sensor.depth();
 
-    // uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", ex.z);
-    // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
+    uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", depth_sensor.depth());
+    // uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", depth_sensor._model);
+    HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
 
     //Controller
     controller.update(state, ex, ev, yaw_sonar, control_input);
