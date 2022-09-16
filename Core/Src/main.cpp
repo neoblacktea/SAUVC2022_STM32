@@ -75,7 +75,7 @@ uint8_t zhc = 0;
 float desired_depth;
 float yaw_sonar = 0;  //yaw angle get from sonar
 float z_d = 1;  //desired depth
-geometry::Vector ex = {0, 1, 0};
+geometry::Vector ex = {0, 0, 0};
 geometry::Vector ev = {0};
 
 // float velocity[3]; //from sonar
@@ -100,10 +100,10 @@ int main(void)
   Bar02 depth_sensor;
 
   Dynamics state = {0};
-  //Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
-  Kinematics control_input = {{0, 1, 0}, {0, 0, 0}};
+  Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
+  // Kinematics control_input = {{0, 2, 0}, {0, 0, 0}};
 
-  Controller controller({1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, {0.5, 0.5, 0}, {1.0, 1.0, 0}, 0);
+  Controller controller({1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, {1, 0.5, 0}, {0.5, 0.5, 0}, 0);
   Propulsion_Sys propulsion_sys;
 
   //Robot Arm
@@ -147,10 +147,11 @@ int main(void)
   imu.set(&hspi2, GPIOB, GPIO_PIN_12);
   if (!depth_sensor.set(&hi2c1))
     return -1;
+  depth_sensor.setFluidDensity(997);
   
   //Controller
-  // imu.update(state);
-  // controller.set(state.orientation);
+  imu.update(state);
+  controller.set(state.orientation);
   //Output
   propulsion_sys.set_timer(&htim2, &htim8);
 
@@ -173,24 +174,26 @@ int main(void)
 
     //IMU
     imu.update(state);
-    // uart_buf_len = sprintf(uart_buf, "%.3f %.3f %.3f\r\n", imu.ax, imu.ay, imu.az);
     // uart_buf_len = sprintf(uart_buf, "%.3f %.3f\r\n", imu.test[0], imu.test[1]);
     // uart_buf_len = sprintf(uart_buf, "%.3f %.3f %.3f %.3f\r\n", imu.q_ItoE.w,  imu.q_ItoE.x,  imu.q_ItoE.y, imu.q_ItoE.z);
-    // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
 
-    ex.z = z_d - depth_sensor.read_value();
+    depth_sensor.read_value();
+    // ex.z = z_d - depth_sensor.depth();
 
-    // uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", ex.z);
-    // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
-    //HAL_Delay(100);
+    uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", depth_sensor.depth());
+    // uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", depth_sensor._model);
+    HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
 
     //Controller
-    //controller.update(state, ex, ev, yaw_sonar, control_input);
+    controller.update(state, ex, ev, yaw_sonar, control_input);
 
+    // uart_buf_len = sprintf(uart_buf, "%.2f %.2f\r\n", controller.eR.x, controller.eR.y);
+    // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
+    
     //Allocate
    // propulsion_sys.allocate(control_input);
 
-    //Motor take turns
+    //Motor take turns test*-------------------------------------------
     // propulsion_sys.motor[0].output(-0.5);
     // HAL_Delay(5000);
     // propulsion_sys.motor[0].output(0);
@@ -215,6 +218,7 @@ int main(void)
     // propulsion_sys.motor[7].output(-0.5);
     // HAL_Delay(5000);
     // propulsion_sys.motor[7].output(0);
+    //-----------------------------------------------------------------
 
     //Robot arm
     arm.move(arm_angle);

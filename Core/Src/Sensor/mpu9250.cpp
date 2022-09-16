@@ -24,32 +24,13 @@ void Mpu9250::set(SPI_HandleTypeDef* spi_h, GPIO_TypeDef* cs_port, uint16_t cs_p
 	write_register(CONFIG, 0x01);
 	write_register(SMPLRT_DIV, 0x00);
 	
-	filter.begin(40);
+	filter.begin(20);
 	filter.setBeta(0.3);
 
+	//Let the IMU value converge
 	Dynamics temp;
 	for (int i = 0; i < 5000; i++)
 		update(temp);
-	// do
-	// {
-	// 	//read acceleration and gyro
-	// 	ax = (float)(read_value(ACCEL_XOUT_H) * 599) / (float)1000000;
-	// 	ay = (float)(read_value(ACCEL_YOUT_H) * 599) / (float)1000000;
-	// 	az = (float)(read_value(ACCEL_ZOUT_H) * 599) / (float)1000000;
-	// 	gx = (float)(read_value(GYRO_XOUT_H) * 133) / (float)1000000;
-	// 	gy = (float)(read_value(GYRO_YOUT_H) * 133) / (float)1000000;
-	// 	gz = (float)(read_value(GYRO_ZOUT_H) * 133) / (float)1000000;
-
-	// 	gx = (int)(gx * 1000) / 1000.0;
-	// 	gy = (int)(gy * 1000) / 1000.0;
-	// 	gz = (int)(gz * 1000) / 1000.0;
-
-	// 	filter.updateIMU(gx, gy, gz, ax, ay, az);
-
-	// 	filter.getQuaternion(&q_filter.w,&q_filter.x, &q_filter.y, &q_filter.z);
-	// 	q_filter = q_filter * q_ItoE;
-	// 	q_ItoE = q_filter.conjugate();
-	// }while ((q_filter.w * q_filter.x) > 0.001 || (q_filter.w * q_filter.y) > 0.001);
 }
 
 int16_t Mpu9250::read_value(uint8_t type)
@@ -69,23 +50,24 @@ void Mpu9250::update(Dynamics &s)
 	gy = (float)(read_value(GYRO_YOUT_H) * 133) / (float)1000000;
 	gz = (float)(read_value(GYRO_ZOUT_H) * 133) / (float)1000000;
 
-	ax = (int)(ax * 1000) / 1000.0;
-	ay = (int)(ay * 1000) / 1000.0;
-	az = (int)(az * 1000) / 1000.0;
-	gx = (int)(gx * 1000) / 1000.0;
-	gy = (int)(gy * 1000) / 1000.0;
-	gz = (int)(gz * 1000) / 1000.0;
+	ax = (int)(ax * 100) / 100.0;
+	ay = (int)(ay * 100) / 100.0;
+	az = (int)(az * 100) / 100.0;
+	gx = (int)(gx * 100) / 100.0;
+	gy = (int)(gy * 100) / 100.0;
+	gz = (int)(gz * 100) / 100.0;
 
 	filter.updateIMU(gx, gy, gz, ax, ay, az);
-
 	filter.getQuaternion(&q_filter.w,&q_filter.x, &q_filter.y, &q_filter.z);
+	
+	//Tansfer quaternion from Earth frame to AUV frame
 	s.orientation = q_EtoA.conjugate() * (q_filter * q_ItoE) * q_EtoA;
 
 	s.velocity.angular.x = gx;
 	s.velocity.angular.y = gy;
 	s.velocity.angular.z = gz;
-	test[0] = atan2f(s.orientation.w * s.orientation.x + s.orientation.y * s.orientation.z, 0.5f - s.orientation.x * s.orientation.x - s.orientation.y * s.orientation.y) * 57.29578f;
-	test[1] = asinf(-2.0f * (s.orientation.x * s.orientation.z - s.orientation.w * s.orientation.y)) * 57.29578f;
+	// test[0] = atan2f(s.orientation.w * s.orientation.x + s.orientation.y * s.orientation.z, 0.5f - s.orientation.x * s.orientation.x - s.orientation.y * s.orientation.y) * 57.29578f;
+	// test[1] = asinf(-2.0f * (s.orientation.x * s.orientation.z - s.orientation.w * s.orientation.y)) * 57.29578f;
 	// test[2] = filter.getYaw();
 }
 
