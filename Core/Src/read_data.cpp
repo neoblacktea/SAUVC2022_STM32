@@ -8,7 +8,7 @@ Read_data::Read_data()
     index = -1;
 	accessible = false;
 	ch = '\n';
-	size_of_data = 44; // depth + yaw + v + velocity + joint = 4+4+12+12+12 = 44
+	size_of_data = 28; // yaw + v + velocity = 4+12+12 = 28
 }
 
 float Read_data::get_single_num()
@@ -27,7 +27,6 @@ float Read_data::get_single_num()
 void Read_data::assign_num()
 {
 	index = 0;
-	depth = get_single_num();
 	yaw = get_single_num();
 	v.x = get_single_num();
 	v.y = get_single_num();
@@ -35,9 +34,10 @@ void Read_data::assign_num()
 	velocity[0] = get_single_num();
 	velocity[1] = get_single_num();
 	velocity[2] = get_single_num();
-	joint[0] = get_single_num();
-	joint[1] = get_single_num();
-	joint[2] = get_single_num();
+	// joint[0] = get_single_num();
+	// joint[1] = get_single_num();
+	// joint[2] = get_single_num();
+	// depth = get_single_num();
 	index = -1;
 	accessible = true;
 }

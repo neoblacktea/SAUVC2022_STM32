@@ -281,15 +281,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     R.receieve();
     if(R.access_ok() == true)
     {
-      desired_depth = R.get_depth();
       yaw_sonar = R.get_yaw();
       ex = R.get_geometry_vector();
       ev.x = R.get_vel0();
       ev.y = R.get_vel1();
       ev.z = R.get_vel2();
-      arm_angle[0] = R.get_joint0();
-      arm_angle[1] = R.get_joint1();
-      arm_angle[2] = R.get_joint2();
+      // arm_angle[0] = R.get_joint0();
+      // arm_angle[1] = R.get_joint1();
+      // arm_angle[2] = R.get_joint2();
+      // desired_depth = R.get_depth();
       R.access_init();
     }
   }

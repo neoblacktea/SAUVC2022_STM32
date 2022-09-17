@@ -7,7 +7,7 @@ class Read_data
     int size_of_data;
     uint8_t ch;
     bool accessible;
-    uint8_t temp[44];
+    uint8_t temp[28];
     float depth;
     float yaw;
     geometry::Vector v;
