@@ -72,14 +72,13 @@ Dvl_reader D;
 
 //data receive from Rpi
 uint8_t zhc = 0;
-float desired_depth;
+float desired_depth = 0.6;  //desired depth
 float yaw_sonar = 0;  //yaw angle get from sonar
-float z_d = 1;  //desired depth
-geometry::Vector ex = {0, 0, 0};
+
+geometry::Vector ex = {0, 1, 0};
 geometry::Vector ev = {0};
 
-// float velocity[3]; //from sonar
-int arm_angle[3] = {0};
+int arm_angle[3] = {0, 0, 10};  //-90~90
 
 /* USER CODE END 0 */
 
@@ -103,7 +102,7 @@ int main(void)
   Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
   // Kinematics control_input = {{0, 2, 0}, {0, 0, 0}};
 
-  Controller controller({1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, {1, 0.5, 0}, {0.5, 0.5, 0}, 0);
+  Controller controller({1.0, 1.0, 3.3}, {1.0, 1.0, 1.0}, {2.3, 0.2, 0}, {1, 1, 0}, 0);
   Propulsion_Sys propulsion_sys;
 
   //Robot Arm
@@ -162,7 +161,7 @@ int main(void)
   // uart_buf_len = sprintf(uart_buf, "ready\r\n");
   // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
   
- //  while(zhc!='\n');
+  // while(zhc!='\n');
 
   /* USER CODE END 2 */
 
@@ -174,15 +173,13 @@ int main(void)
 
     //IMU
     imu.update(state);
-    // uart_buf_len = sprintf(uart_buf, "%.3f %.3f\r\n", imu.test[0], imu.test[1]);
-    // uart_buf_len = sprintf(uart_buf, "%.3f %.3f %.3f %.3f\r\n", imu.q_ItoE.w,  imu.q_ItoE.x,  imu.q_ItoE.y, imu.q_ItoE.z);
 
+    //Depth Sensor
     depth_sensor.read_value();
-    ex.z = z_d - depth_sensor.depth();
+    ex.z = desired_depth - depth_sensor.depth();
 
-    //uart_buf_len = sprintf(uart_buf, "Depth: %.3f %.3f\r\n", depth_sensor.depth(), depth_sensor.depth() + 0.195);
-    // uart_buf_len = sprintf(uart_buf, "Depth: %.3f\r\n", depth_sensor._model);
-    //HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
+    uart_buf_len = sprintf(uart_buf, "Depth: %.3f %.3f\r\n", depth_sensor.depth(), ex.z);
+    HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
 
     //Controller
     controller.update(state, ex, ev, yaw_sonar, control_input);
@@ -190,8 +187,8 @@ int main(void)
     // uart_buf_len = sprintf(uart_buf, "%.2f %.2f\r\n", controller.eR.x, controller.eR.y);
     // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
     
-    //Allocate
-    propulsion_sys.allocate(control_input);
+    //Allocate and Output
+    // propulsion_sys.allocate(control_input);  //T200 Motor Output
 
     //Motor take turns test*-------------------------------------------
     // propulsion_sys.motor[0].output(-0.5);
@@ -221,7 +218,7 @@ int main(void)
     //-----------------------------------------------------------------
 
     //Robot arm
-    arm.move(arm_angle);
+    arm.move(arm_angle);  //Robot Arm Output
 
     /* USER CODE BEGIN 3 */
   }
