@@ -1,6 +1,8 @@
 #include "Sensor/bar02.h"
 #include "math.h"
 
+const float depth_offset = 0.3;
+
 // sensor address
 const uint8_t MS5837_ADDR = 0x76 << 1;
 // sensor command byte
@@ -215,7 +217,7 @@ float Bar02::temperature()
 
 float Bar02::depth() 
 {
-	return (pressure(Bar02::Pa) - 101300) / (fluidDensity * 9.80665) + 0.195; // from experiment we measure the offset is 0.195m
+	return (pressure(Bar02::Pa) - 101300) / (fluidDensity * 9.80665) + depth_offset; // from experiment we measure the offset is 0.195m
 }
 
 float Bar02::altitude() 
