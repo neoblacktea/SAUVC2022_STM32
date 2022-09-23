@@ -4,10 +4,10 @@
 class Read_data
 {
     int index; //which element of std::vector
+    int total_byte;
     int size_of_data;
     uint8_t ch;
     bool accessible;
-    uint8_t temp[44];
     float depth;
     float yaw;
     geometry::Vector v;
@@ -16,6 +16,7 @@ class Read_data
 
 public:
     Read_data();
+    uint8_t receieved_data[45];
     float get_single_num();
     void assign_num();
     void receieve();
