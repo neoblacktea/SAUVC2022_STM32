@@ -5,10 +5,11 @@
 
 Read_data::Read_data()
 {
-    index = -1;
+    index = 1;
 	accessible = false;
 	ch = '\n';
-	size_of_data = 28; // yaw + v + velocity = 4+12+12 = 28
+	size_of_data = 44;
+	total_byte = size_of_data + 1;
 }
 
 float Read_data::get_single_num()
@@ -18,7 +19,7 @@ float Read_data::get_single_num()
 	char *ch = (char *) &n;
 	for(i=0;i<4;i++)
 	{
-		ch[i] = temp[index];
+		ch[i] = receieved_data[index];
 		index++;
 	}
 	return n;
@@ -26,7 +27,6 @@ float Read_data::get_single_num()
 
 void Read_data::assign_num()
 {
-	index = 0;
 	yaw = get_single_num();
 	v.x = get_single_num();
 	v.y = get_single_num();
@@ -34,28 +34,45 @@ void Read_data::assign_num()
 	velocity[0] = get_single_num();
 	velocity[1] = get_single_num();
 	velocity[2] = get_single_num();
-	// joint[0] = get_single_num();
-	// joint[1] = get_single_num();
-	// joint[2] = get_single_num();
-	// depth = get_single_num();
-	index = -1;
+	joint[0] = get_single_num();
+	joint[1] = get_single_num();
+	joint[2] = get_single_num();
+	depth = get_single_num();
+	index = 1;
 	accessible = true;
 }
 
-void Read_data::receieve() 
-{
-	if(index < size_of_data ) 
-	{	
-		HAL_UART_Receive_IT(&huart5, &ch, 1);
-		if(ch != '\n')
-		{
-			index++;
-			temp[index] = ch;
-		}
-	}
-	if(index == (size_of_data-1) )
-	{
-			assign_num();
-	}
-}
+// void Read_data::receieve() 
+// {
+// 	if(index < size_of_data ) 
+// 	{	
+// 		HAL_UART_Receive_IT(&huart5, &ch, 1);
+// 		if(ch != '\n')
+// 		{
+// 			index++;
+// 			temp[index] = ch;
+// 		}
+// 	}
+// 	if(index == (size_of_data-1) )
+// 	{
+// 			assign_num();
+// 	}
+// }
+
+// void Read_data::receieve() 
+// {
+// 	if(index < size_of_data ) 
+// 	{	
+// 		HAL_UART_Receive_IT(&huart5, &ch, 1);
+// 		if(ch != '\n')
+// 		{
+// 			index++;
+// 			temp[index] = ch;
+// 		}
+// 	}
+// 	if(index == (size_of_data-1) )
+// 	{
+// 			assign_num();
+// 	}
+// }
 

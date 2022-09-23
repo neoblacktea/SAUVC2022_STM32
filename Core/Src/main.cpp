@@ -72,13 +72,15 @@ Dvl_reader D;
 
 //data receive from Rpi
 uint8_t zhc = 0;
-float desired_depth = 0.6;  //desired depth
+volatile uint8_t flag = 0;
+uint8_t arr_test[29];
+float desired_depth = 0.3;  //desired depth
 float yaw_sonar = 0;  //yaw angle get from sonar
 
-geometry::Vector ex = {0, 1, 0};
+geometry::Vector ex = {0, 1, 1};
 geometry::Vector ev = {0};
 
-int arm_angle[3] = {0, 0, 10};  //-90~90
+int arm_angle[3] = {0, 0, 0};  //-90~90
 
 /* USER CODE END 0 */
 
@@ -99,8 +101,8 @@ int main(void)
   Bar02 depth_sensor;
 
   Dynamics state = {0};
-  Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
-  // Kinematics control_input = {{0, 2, 0}, {0, 0, 0}};
+  //Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
+  Kinematics control_input = {{0, 2, 0}, {0, 0, 0}};
 
   Controller controller({1.0, 1.0, 3.3}, {1.0, 1.0, 1.0}, {2.3, 0.2, 0}, {1, 1, 0}, 0);
   Propulsion_Sys propulsion_sys;
@@ -138,8 +140,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   //Uart Interrupt
-  HAL_UART_Receive_IT(&huart5, &zhc, 1);
-  HAL_UART_Receive_IT(&huart4, &D.receieve_char, 1);
+  //HAL_UART_Receive_IT(&huart5, &zhc, 1);
+  HAL_UART_Receive_IT(&huart5, arr_test, 28);
+  //HAL_UART_Receive_IT(&huart4, &D.receieve_char, 1);
   //R.receieve();
 
   //Sensor
@@ -154,8 +157,8 @@ int main(void)
   //Output
   propulsion_sys.set_timer(&htim2, &htim8);
 
-  arm.set(&htim4, arm_angle);
-  HAL_Delay(3000);
+  // arm.set(&htim4, arm_angle);
+  // HAL_Delay(3000);
 
   //debug
   // uart_buf_len = sprintf(uart_buf, "ready\r\n");
@@ -178,8 +181,8 @@ int main(void)
     depth_sensor.read_value();
     ex.z = desired_depth - depth_sensor.depth();
 
-    uart_buf_len = sprintf(uart_buf, "Depth: %.3f %.3f\r\n", depth_sensor.depth(), ex.z);
-    HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
+    // uart_buf_len = sprintf(uart_buf, "Depth: %.3f %.3f\r\n", depth_sensor.depth(), ex.z);
+    // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
 
     //Controller
     controller.update(state, ex, ev, yaw_sonar, control_input);
@@ -188,38 +191,84 @@ int main(void)
     // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
     
     //Allocate and Output
-    // propulsion_sys.allocate(control_input);  //T200 Motor Output
+    //propulsion_sys.allocate(control_input);  //T200 Motor Output
 
     //Motor take turns test*-------------------------------------------
-    // propulsion_sys.motor[0].output(-0.5);
-    // HAL_Delay(5000);
-    // propulsion_sys.motor[0].output(0);
-    // propulsion_sys.motor[1].output(0.5);
-    // HAL_Delay(5000);
-    // propulsion_sys.motor[1].output(0);
-    // propulsion_sys.motor[2].output(0.5);
-    // HAL_Delay(5000);
-    // propulsion_sys.motor[2].output(0);
-    // propulsion_sys.motor[3].output(-0.5);
-    // HAL_Delay(5000);
-    // propulsion_sys.motor[3].output(0);
-    // propulsion_sys.motor[4].output(-0.5);
-    // HAL_Delay(5000);
-    // propulsion_sys.motor[4].output(0);
-    // propulsion_sys.motor[5].output(0.5);
-    // HAL_Delay(5000);
-    // propulsion_sys.motor[5].output(0);
-    // propulsion_sys.motor[6].output(0.5);
-    // HAL_Delay(5000);
-    // propulsion_sys.motor[6].output(0);
-    // propulsion_sys.motor[7].output(-0.5);
-    // HAL_Delay(5000);
-    // propulsion_sys.motor[7].output(0);
+    propulsion_sys.motor[0].output(-0.5);
+    HAL_Delay(1000);
+    propulsion_sys.motor[0].output(0);
+    propulsion_sys.motor[1].output(0.5);
+    HAL_Delay(1000);
+    propulsion_sys.motor[1].output(0);
+    propulsion_sys.motor[2].output(0.5);
+    HAL_Delay(1000);
+    propulsion_sys.motor[2].output(0);
+    propulsion_sys.motor[3].output(-0.5);
+    HAL_Delay(1000);
+    propulsion_sys.motor[3].output(0);
+    propulsion_sys.motor[4].output(-0.5);
+    HAL_Delay(1000);
+    propulsion_sys.motor[4].output(0);
+    propulsion_sys.motor[5].output(0.5);
+    HAL_Delay(1000);
+    propulsion_sys.motor[5].output(0);
+    propulsion_sys.motor[6].output(0.5);
+    HAL_Delay(1000);
+    propulsion_sys.motor[6].output(0);
+    propulsion_sys.motor[7].output(-0.5);
+    HAL_Delay(1000);
+    propulsion_sys.motor[7].output(0);
     //-----------------------------------------------------------------
 
     //Robot arm
-    arm.move(arm_angle);  //Robot Arm Output
+    // arm.move(arm_angle);  //Robot Arm Output
+    // HAL_Delay(1500);
+    // arm_angle[2] = 10;
+    // arm.move(arm_angle);
+    // HAL_Delay(1500);
+    // arm_angle[2] = -10;
+    // arm.move(arm_angle);
+    // HAL_Delay(1500);
 
+
+    // receieve data from rpi
+    // 45 is total_byte and 44 is size of data
+    if( HAL_UART_Receive(&huart5, arr_test, 45,1000) == HAL_OK)
+    {
+      uint8_t i = 0;
+      if(arr_test[0] != 'n')
+      {
+        while((arr_test[i] != '\n'))
+        {
+          R.receieved_data[44-i] = arr_test[i];
+          i++;
+          
+          if(arr_test[i] == '\n')
+          {
+            for(uint8_t j = 0; j<(45-i); j++)
+            {
+              R.receieved_data[j] = arr_test[i+j];
+            }
+            break;
+          }
+        }
+      }
+      else
+        for(i=0;i<45;i++)
+          R.receieved_data[i] = arr_test[i];
+
+      R.assign_num();
+      yaw_sonar = R.get_yaw();
+      ex = R.get_geometry_vector();
+      ev.x = R.get_vel0();
+      ev.y = R.get_vel1();
+      ev.z = R.get_vel2();
+      arm_angle[0] = R.get_joint0();
+      arm_angle[1] = R.get_joint1();
+      arm_angle[2] = R.get_joint2();
+      desired_depth = R.get_depth();
+    }
+    
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -271,30 +320,43 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+// void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+// {
+//   //if(huart->Instance == UART5)
+//   R.receieve();
+//   if(R.access_ok() == true)
+//   {
+//     yaw_sonar = R.get_yaw();
+//     ex = R.get_geometry_vector();
+//     ev.x = R.get_vel0();
+//     ev.y = R.get_vel1();
+//     ev.z = R.get_vel2();
+//     // arm_angle[0] = R.get_joint0();
+//     // arm_angle[1] = R.get_joint1();
+//     // arm_angle[2] = R.get_joint2();
+//     // desired_depth = R.get_depth();
+//     R.access_init();
+//   }
+//   // else if(huart->Instance == UART4)
+//   // {
+//   //   D.filling();
+//   //   HAL_UART_Receive_IT(&huart4, &D.receieve_char, 1);
+//   // }
+// }
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-  if(huart->Instance == UART5)
-  {
-    R.receieve();
-    if(R.access_ok() == true)
-    {
-      yaw_sonar = R.get_yaw();
-      ex = R.get_geometry_vector();
-      ev.x = R.get_vel0();
-      ev.y = R.get_vel1();
-      ev.z = R.get_vel2();
-      // arm_angle[0] = R.get_joint0();
-      // arm_angle[1] = R.get_joint1();
-      // arm_angle[2] = R.get_joint2();
-      // desired_depth = R.get_depth();
-      R.access_init();
-    }
-  }
-  else if(huart->Instance == UART4)
-  {
-    D.filling();
-    HAL_UART_Receive_IT(&huart4, &D.receieve_char, 1);
-  }
+  // //if(huart->Instance == UART5)
+  // R.receieve();
+  // if(R.access_ok() == true)
+  // {
+  //   yaw_sonar = R.get_yaw();
+  //   ex = R.get_geometry_vector();
+  //   ev.x = R.get_vel0();
+  //   ev.y = R.get_vel1();
+  //   ev.z = R.get_vel2();
+  //   R.access_init();
+  // }
+  //HAL_UART_Receive_IT(&huart5, arr_test, 28);
 }
 /* USER CODE END 4 */
 
