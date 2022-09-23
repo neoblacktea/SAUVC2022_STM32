@@ -99,8 +99,8 @@ int main(void)
   Bar02 depth_sensor;
 
   Dynamics state = {0};
-  Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
-  // Kinematics control_input = {{0, 2, 0}, {0, 0, 0}};
+  // Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
+  Kinematics control_input = {{0, 1, 1}, {0, 0, 0}};
 
   Controller controller({1.0, 1.0, 3.3}, {1.0, 1.0, 1.0}, {2.3, 0.2, 0}, {1, 1, 0}, 0);
   Propulsion_Sys propulsion_sys;
@@ -161,7 +161,7 @@ int main(void)
   // uart_buf_len = sprintf(uart_buf, "ready\r\n");
   // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
   
-  // while(zhc!='\n');
+  while(zhc!='\n');
 
   /* USER CODE END 2 */
 
@@ -182,13 +182,13 @@ int main(void)
     HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
 
     //Controller
-    controller.update(state, ex, ev, yaw_sonar, control_input);
+    // controller.update(state, ex, ev, yaw_sonar, control_input);
 
     // uart_buf_len = sprintf(uart_buf, "%.2f %.2f\r\n", controller.eR.x, controller.eR.y);
     // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
     
     //Allocate and Output
-    // propulsion_sys.allocate(control_input);  //T200 Motor Output
+    propulsion_sys.allocate(control_input);  //T200 Motor Output
 
     //Motor take turns test*-------------------------------------------
     // propulsion_sys.motor[0].output(-0.5);
