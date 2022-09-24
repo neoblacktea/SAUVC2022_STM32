@@ -73,10 +73,10 @@ Read_data R;
 //data receive from Rpi
 uint8_t zhc = 0;
 uint8_t arr_test[29];
-float desired_depth = 0.7;  //desired depth
+float desired_depth = 0.5;  //desired depth
 float yaw_sonar = 0;  //yaw angle get from sonar
 
-geometry::Vector ex = {0, 0, 0};
+geometry::Vector ex = {0, 2, 0};
 geometry::Vector ev = {0};
 
 int arm_angle[3] = {0, 0, 0};  //-90~90
@@ -92,8 +92,8 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
   //debug
-  // char uart_buf[100];
-  // int uart_buf_len;
+  char uart_buf[100];
+  int uart_buf_len;
 
   //sensor
   Mpu9250 imu;
@@ -103,7 +103,7 @@ int main(void)
   Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
   // Kinematics control_input = {{0, 1, 1}, {0, 0, 0}};
 
-  Controller controller({1.0, 1.0, 3.3}, {1.0, 1.0, 1.0}, {2, 1, 0}, {1, 1, 0}, 0);
+  Controller controller({1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}, {1.5, 1, 1.5}, {1, 1, 0}, 0);
   Propulsion_Sys propulsion_sys;
 
   //Robot Arm
@@ -178,11 +178,11 @@ int main(void)
     imu.update(state);
 
     //Depth Sensor
-    depth_sensor.read_value();
-    ex.z = desired_depth - depth_sensor.depth();
+    // depth_sensor.read_value();
+    // ex.z = desired_depth - depth_sensor.depth();
 
-    // uart_buf_len = sprintf(uart_buf, "Depth: %.3f %.3f\r\n", depth_sensor.depth(), ex.z);
-    // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
+    uart_buf_len = sprintf(uart_buf, "Depth: %.3f %.3f\r\n", depth_sensor.depth(), ex.z);
+    HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
 
     //Controller
     controller.update(state, ex, ev, yaw_sonar, control_input);

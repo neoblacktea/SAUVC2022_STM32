@@ -95,6 +95,7 @@ void Controller::update(Dynamics &s, const geometry::Vector &ex, const geometry:
     eR.x = Re[2][1];
     eR.y = Re[0][2];
     eR.z = (-1) * yaw_sonar;
+    // eR.z = 0.5;
 
     eOmega.x = s.velocity.angular.x;
     eOmega.y = s.velocity.angular.y;
