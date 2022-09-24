@@ -36,6 +36,7 @@ private:
     int32_t TEMP;
     int32_t P;
     uint8_t _model;
+    float depth_offset;
 
     float fluidDensity;
 
