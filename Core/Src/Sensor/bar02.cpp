@@ -72,13 +72,13 @@ bool Bar02::set(I2C_HandleTypeDef* handler)
 
     setFluidDensity(997);
 
-    // float tmp = 0;
-    // for(int i = 0; i <= 9; i++)
-    // {
-    //     read_value();
-    //     tmp += depth();
-    // }
-    depth_offset = 0/*tmp / 10.0*/;
+    float tmp = 0;
+    for(int i = 0; i <= 9; i++)
+    {
+        read_value();
+        tmp += depth();
+    }
+    depth_offset = tmp / 10.0;
 
     return true;
 }
