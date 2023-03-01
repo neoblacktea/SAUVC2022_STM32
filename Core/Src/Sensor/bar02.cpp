@@ -72,13 +72,19 @@ bool Bar02::set(I2C_HandleTypeDef* handler)
 
     setFluidDensity(997);
 
-    // float tmp = 0;
-    // for(int i = 0; i <= 9; i++)
-    // {
-    //     read_value();
-    //     tmp += depth();
-    // }
-    depth_offset = 0/*tmp / 10.0*/;
+    // remove initial sensor value (not accurate)
+    for(int i =0;i<=9;i++){
+        read_value();
+    }
+
+    // intialize 
+    float tmp = 0;
+    for(int i = 0; i <= 9; i++)
+    {
+        read_value();
+        tmp += depth();
+    }
+    depth_offset = tmp / 10.0;
 
     return true;
 }
@@ -280,4 +286,20 @@ uint8_t Bar02::crc4(uint16_t n_prom[])
 // in while loop  (USER CODE END WHILE)
     uart_buf_len = sprintf(uart_buf, "Depth: %f \r\n", depth_sensor.read_value());
     HAL_UART_Transmit(&huart4, (uint8_t*) uart_buf, uart_buf_len, 1000);
+*/
+
+
+// procedure
+/*
+    1. initialize Bar02 object
+        # Bar02 depth_sensor;
+
+    2. initialize sensor
+        # bool tmp = depth_sensor.set(&hi2c1); 
+
+    3. read value
+        # depth_sensor.read_value();
+
+    4. get depth value 
+        # depth_sensor.depth();
 */
