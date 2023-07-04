@@ -18,11 +18,14 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "rosserial.h"
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -75,10 +78,11 @@ uint8_t zhc = 0;
 uint8_t arr_test[29];
 float desired_depth = 0.5;  //desired depth
 float yaw_sonar = 0;  //yaw angle get from sonar
-
+float val2 = 0;
 geometry::Vector ex = {0, 2, 0};
 geometry::Vector ev = {0};
 
+float val1;
 int arm_angle[3] = {0, 0, 0};  //-90~90
 
 /* USER CODE END 0 */
@@ -94,7 +98,7 @@ int main(void)
   //debug
   char uart_buf[100];
   int uart_buf_len;
-
+  
   //sensor
   Mpu9250 imu;
   Bar02 depth_sensor;
@@ -128,13 +132,14 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_DMA_Init();
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_SPI2_Init();
   MX_TIM2_Init();
   MX_TIM4_Init();
   MX_TIM8_Init();
-  MX_UART4_Init();
+  MX_USART3_UART_Init();
   MX_UART5_Init();
   /* USER CODE BEGIN 2 */
 
@@ -156,14 +161,13 @@ int main(void)
   propulsion_sys.set_timer(&htim2, &htim8);
 
   arm.set(&htim4, arm_angle);
-
+  
   //Wait for motor to setup
   HAL_Delay(3000);
-
+  setup();
   //debug
   // uart_buf_len = sprintf(uart_buf, "ready\r\n");
   // HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
-  
   // while(zhc!='\n');
 
   /* USER CODE END 2 */
@@ -176,11 +180,11 @@ int main(void)
 
     //IMU
     imu.update(state);
-
+    float t2 = val1;
     //Depth Sensor
     // depth_sensor.read_value();
     // ex.z = desired_depth - depth_sensor.depth();
-
+    loop_pub(t2);
     uart_buf_len = sprintf(uart_buf, "Depth: %.3f %.3f\r\n", depth_sensor.depth(), ex.z);
     HAL_UART_Transmit(&huart5, (uint8_t*) uart_buf, uart_buf_len, 1000);
 
@@ -268,7 +272,6 @@ int main(void)
       arm_angle[2] = R.get_joint2();
       desired_depth = R.get_depth();
     }
-    
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -343,8 +346,8 @@ void SystemClock_Config(void)
 //   //   HAL_UART_Receive_IT(&huart4, &D.receieve_char, 1);
 //   // }
 // }
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
+//void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+//{
   // //if(huart->Instance == UART5)
   // R.receieve();
   // if(R.access_ok() == true)
@@ -357,7 +360,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   //   R.access_init();
   // }
   //HAL_UART_Receive_IT(&huart5, arr_test, 28);
-}
+//}
 /* USER CODE END 4 */
 
 /**
