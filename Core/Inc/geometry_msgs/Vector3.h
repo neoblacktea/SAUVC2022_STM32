@@ -9,7 +9,7 @@
 namespace geometry_msgs
 {
 
-  class Vector3 : public ros::Msg
+  class Vector3 : public ros::Msg 
   {
     public:
       typedef double _x_type;
