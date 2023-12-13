@@ -7,7 +7,7 @@
 #include "ros.h"
 #include <string>
 #include <sstream>
-//#include "Datatype/dynamics.h"
+#include "Datatype/dynamics.h"
 #include "controller.h"
 #include "std_msgs/Float64MultiArray.h"
 

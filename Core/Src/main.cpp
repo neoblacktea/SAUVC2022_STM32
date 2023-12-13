@@ -90,6 +90,7 @@ extern geometry::Vector ex = {0, 0, 0}; // position error
 extern geometry::Vector ev = {0};       // velocity error
 double depth = 0;
 
+Dynamics state;
 // robot arm
 //int arm_angle[3] = {0, 0, 0};  //-90~90
 
@@ -111,7 +112,7 @@ int main(void)
   Mpu9250 imu;
   Bar02 depth_sensor;
 
-  Dynamics state = {0};
+  //Dynamics state = {0};
   Kinematics control_input = {0};  //force: x, y, z; moment: x, y, z
   // Kinematics control_input = {{0, 1, 1}, {0, 0, 0}};
 
@@ -160,7 +161,7 @@ int main(void)
   // rosserial communication
   rosserial_init(&ex, &state, &yaw_sonar);
   rosserial_subscribe();
-  rosserial_subscribe();
+  
 
   //Sensor
   imu.set(&hspi2, GPIOB, GPIO_PIN_12);
@@ -215,9 +216,9 @@ int main(void)
   {
     /* USER CODE END WHILE */
     /**/
-    rosserial_subscribe();
+    
     //IMU
-    imu.update(state);
+    //imu.update(state);
     //Depth Sensor
     depth_sensor.read_value();
     depth = depth_sensor.depth();
@@ -269,7 +270,7 @@ int main(void)
     // arm.move(arm_angle);
     // HAL_Delay(1500);
 
-    rosserial_publish(depth);
+    rosserial_publish(state.orientation.w);
     
     /*
     // receieve data from rpi

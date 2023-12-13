@@ -66,7 +66,7 @@ void Propulsion_Sys::allocate(const Kinematics &ctrl_input)
     thrust[7] = ctrl_input.linear.x * -0.3536 + ctrl_input.linear.y * 0.3536 + ctrl_input.linear.z * 0 
                 + ctrl_input.angular.x * 0 + ctrl_input.angular.y * 0 + ctrl_input.angular.z * -0.783;
     */
-
+    
     thrust[0] = ctrl_input.linear.x  * -0.0209 + ctrl_input.linear.y  *  0.0121 + ctrl_input.linear.z  * 0.249 + 
                 ctrl_input.angular.x * -1.2077 + ctrl_input.angular.y * -2.0921 + ctrl_input.angular.z * 0;
 
@@ -90,8 +90,16 @@ void Propulsion_Sys::allocate(const Kinematics &ctrl_input)
 
     thrust[7] = ctrl_input.linear.x  * 0.3536 + ctrl_input.linear.y   *  0.3536 + ctrl_input.linear.z * 0 +
                 ctrl_input.angular.x * 0      + ctrl_input.angular.y  *  0      + ctrl_input.angular.z * -0.76825;
-
     
+    /*thrust[0] = 0.1;
+    thrust[1] = 0.1;
+    thrust[2] = 0.1;
+    thrust[3] = 0.1;
+    thrust[4] = 0.1;
+    thrust[5] = 0.1;
+    thrust[6] = 0.1;
+    thrust[7] = 0.1;*/
+
     //Reverse direction
     thrust[1] *= -1;
     thrust[2] *= -1;
@@ -100,5 +108,5 @@ void Propulsion_Sys::allocate(const Kinematics &ctrl_input)
 
     //output thurst
     for (int i = 0; i < 8; i++)
-        motor[i].output(thrust[i]);
+        motor[i].output(0.3*thrust[i]);
 }

@@ -8,6 +8,7 @@
 #include "rosserial.h"
 #include "std_msgs/Float32MultiArray.h"
 
+
 ros::NodeHandle nh;
 
 // parameters
@@ -15,10 +16,11 @@ geometry::Vector* ex_pointer;
 geometry::Vector* ev_pointer;
 Dynamics* state_pointer;
 float* yaw_pointer;
-std_msgs::Float64MultiArray pub_msg;
+float rec;
+std_msgs::Float32MultiArray pub_msg;
 Quaternion q_camera2AUV;
-
-
+extern Dynamics state;
+double rec_msg[13];
 
 
 /* ----subscriber parameters
@@ -29,18 +31,30 @@ Quaternion q_camera2AUV;
 
 
 */
-void callback(const std_msgs::Float64MultiArray& msg){
-  //*(state_pointer)->orientation.w = msg.data[0];
-  //*(state_pointer)->orientation.x = msg.data[1];
-  //*(state_pointer)->orientation.y = msg.data[2];
-  //*(state_pointer)->orientation.z = msg.data[3];
+void callback(const std_msgs::Float32MultiArray& msg){
+  state_pointer->orientation.w = msg.data[0];
+  state_pointer->orientation.x = msg.data[1];
+  state_pointer->orientation.y = msg.data[2];
+  state_pointer->orientation.z = msg.data[3];
+  //state.orientation.w = msg.data[0];
+
+
   geometry::Vector ex;
   geometry::Vector ev;
-  Quaternion camera(msg.data[0], msg.data[1], msg.data[2], msg.data[3]);
-  state_pointer->orientation = q_camera2AUV.conjugate() * camera * q_camera2AUV; 
+  //Dynamics state;
+  
+  //Quaternion camera(msg.data[0], msg.data[1], msg.data[2], msg.data[3]);
+  /*q_camera2AUV.x = 1;
+  q_camera2AUV.y = 0;
+  q_camera2AUV.z = 0;
+  q_camera2AUV.w = 0;
+  state_pointer->orientation = q_camera2AUV.conjugate() * camera * q_camera2AUV;*/ 
+  
+  //state_pointer->orientation = camera;
   state_pointer->velocity.angular.x = msg.data[4];
   state_pointer->velocity.angular.y = msg.data[5];
-  state_pointer->velocity.angular.z = msg.data[6];
+  state_pointer->velocity.angular.z = msg.data[6]; 
+
   ex.x = msg.data[7];
   ex.y = msg.data[8];
   //*(ex.z) = msg.data[9];
@@ -48,8 +62,8 @@ void callback(const std_msgs::Float64MultiArray& msg){
   ev.y = msg.data[11];
   //*(ev.z) = msg.data[12];
 }
-ros::Publisher pub("/stm32_to_rpi", &pub_msg);
-ros::Subscriber<std_msgs::Float64MultiArray> sub("/rpi_to_stm32", callback);
+ros::Publisher pub("stm32_to_rpi", &pub_msg);
+ros::Subscriber<std_msgs::Float32MultiArray> sub("rpi_to_stm32", callback);
 
 
 void rosserial_subscribe(){
@@ -58,10 +72,17 @@ void rosserial_subscribe(){
 
 void rosserial_publish(double depth){
   // publish data
-  pub_msg.data_length = 1;
-  pub_msg.data[0] = depth;
+  pub_msg.data_length = 3;
+  float array[3] = {0};
+  
+  
+  array[0] = state_pointer->orientation.w;
+  array[1] = state.orientation.w;
+  array[2] = depth;
+  //pub_msg.data[0] = depth;
+  pub_msg.data = array;
   pub.publish(&pub_msg);
-   nh.spinOnce();
+  nh.spinOnce();
 }
 
 void rosserial_init(geometry::Vector* ex_p, Dynamics* s_p, float* yaw)
