@@ -270,7 +270,7 @@ int main(void)
     // arm.move(arm_angle);
     // HAL_Delay(1500);
 
-    rosserial_publish(state.orientation.w);
+    rosserial_publish(state.orientation.w, state.orientation.x, state.orientation.y, state.orientation.z);
     
     /*
     // receieve data from rpi
