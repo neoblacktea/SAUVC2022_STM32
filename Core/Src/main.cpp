@@ -87,7 +87,7 @@ void SystemClock_Config(void);
 float desired_depth = 0;  //desired depth
 float yaw_sonar = 0;  //yaw angle get from sonar
 extern geometry::Vector ex = {0, 0, 0}; // position error
-extern geometry::Vector ev = {0};       // velocity error
+extern geometry::Vector ev = {0, 0, 0};       // velocity error
 double depth = 0;
 
 Dynamics state;
@@ -222,8 +222,8 @@ int main(void)
     //Depth Sensor
     depth_sensor.read_value();
     depth = depth_sensor.depth();
-    ex.z = desired_depth - depth_sensor.depth();
-
+    //ex.z = desired_depth - depth_sensor.depth();
+    ex.z = 0;
     //Controller
     controller.update(state, ex, ev, yaw_sonar, control_input);
 

@@ -70,8 +70,16 @@ void T200::output(const float &force)
     if(diff > DIFF_MAX)    signal = prev_signal + DIFF_MAX;
     else if(diff<DIFF_MAX) signal = prev_signal - DIFF_MAX;
     */
+    int var = signal - prev_signal;
+    
+    int i = (var >= 0) ? 1 : -1;
+    while(var!=0){
+        prev_signal+=i;
+        var-=i;
 
-    prev_signal = signal;
-    //output PWM signal
-    motor.output(signal);
+        motor.output(prev_signal);
+        HAL_Delay(10);
+    }    
+    //motor.output(signal);
+    prev_signal = signal; 
 }
